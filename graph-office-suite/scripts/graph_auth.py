@@ -24,6 +24,23 @@ from utils import (  # noqa: E402
     _request_token,
 )
 
+CORE_SKILL_SCOPES = {"Mail.ReadWrite", "Mail.Send", "Calendars.ReadWrite", "offline_access"}
+
+
+def warn_if_missing_core_scopes(scopes: List[str], context: str) -> None:
+    missing = sorted(CORE_SKILL_SCOPES.difference(set(scopes)))
+    if not missing:
+        return
+    joined = ", ".join(missing)
+    print(
+        f"[aviso] Escopos ausentes para uso completo da skill ({context}): {joined}.",
+        file=sys.stderr,
+    )
+    print(
+        "[aviso] Reautentique incluindo os escopos padrão para e-mail + calendário.",
+        file=sys.stderr,
+    )
+
 
 def request_device_code(client_id: str, scopes: List[str], tenant_id: str) -> dict:
     authority = _authority(tenant_id)
@@ -66,6 +83,7 @@ def command_device_login(args: argparse.Namespace) -> None:
     scopes = args.scopes or DEFAULT_SCOPES
     client_id = args.client_id or DEFAULT_CLIENT_ID
     tenant_id = args.tenant_id or DEFAULT_TENANT
+    warn_if_missing_core_scopes(scopes, "device-login")
     device = request_device_code(client_id, scopes, tenant_id)
     verification_uri = device.get("verification_uri") or device.get("verification_uri_complete")
     print("=== Autorize o acesso ===")
@@ -109,6 +127,8 @@ def command_status(_: argparse.Namespace) -> None:
         print("Sem estado salvo.")
         return
     token = state.get("token")
+    scopes = state.get("scopes", [])
+    warn_if_missing_core_scopes(scopes, "estado salvo")
     expires = token.get("expires_at") if token else None
     seconds = int(expires - time.time()) if expires else None
     print(json_summary(state))
