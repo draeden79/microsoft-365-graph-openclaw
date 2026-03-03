@@ -1,0 +1,11 @@
+# Runtime state and logs
+state/
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment files
+.env
+.env.*

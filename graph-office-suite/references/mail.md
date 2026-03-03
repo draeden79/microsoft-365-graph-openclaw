@@ -1,39 +1,39 @@
 # Mail Reference
 
-## Listagem
+## Listing
 
 ```
-python skills/graph-office-suite/scripts/mail_fetch.py --folder Inbox --top 10 --unread
+python graph-office-suite/scripts/mail_fetch.py --folder Inbox --top 10 --unread
 ```
 
-- `--filter` aceita expressões OData (`contains(subject,'Thais')`).
-- `--id <messageId>` busca mensagem específica.
-- `--include-body` traz corpo completo (HTML + texto).
-- `--mark-read` e `--move-to <folderId>` atuam sobre a mensagem carregada com `--id`.
+- `--filter` accepts OData expressions (`contains(subject,'Status')`).
+- `--id <messageId>` fetches a specific message.
+- `--include-body` returns full body content (HTML + text).
+- `--mark-read` and `--move-to <folderId>` act on the message loaded with `--id`.
 
-## Envio
+## Sending
 
 ```
-python skills/graph-office-suite/scripts/mail_send.py \
-  --to thais@example.com \
+python graph-office-suite/scripts/mail_send.py \
+  --to user@example.com \
   --subject "Follow-up" \
   --body-file drafts/reply.html --html \
-  --cc manuel@example.com \
-  --attachment docs/proposta.pdf
+  --cc teammate@example.com \
+  --attachment docs/proposal.pdf
 ```
 
-- `saveToSentItems` é `True` por padrão. Use `--no-save-copy` se quiser desabilitar.
-- Anexos são convertidos para fileAttachment e limitados a 3 MB nesse endpoint; para maiores, usar upload session (futuro).
+- `saveToSentItems` is `True` by default. Use `--no-save-copy` to disable.
+- Attachments are sent as `fileAttachment` and are limited on this endpoint; for large files, implement upload session flow.
 
-## IDs de pasta úteis
+## Useful folder IDs
 
-Liste pastas com:
+List folders with:
 ```
-curl -H "Authorization: Bearer $(python -m scripts.print_token)" \
+curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
   https://graph.microsoft.com/v1.0/me/mailFolders
 ```
-Ou adapte `mail_fetch.py --folder 'SentItems'`.
+Or query a known folder with `mail_fetch.py --folder SentItems`.
 
-## Desduplicação / watch
+## De-duplication / watch
 
-Use `state/email_watch.json` como base para armazenar o `receivedDateTime` e ID da última mensagem processada.
+Use `state/email_watch.json` to track the `receivedDateTime` and ID of the last processed message.

@@ -31,16 +31,16 @@ def attendees_list(addresses: Optional[List[str]] = None) -> List[dict]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Gerencia eventos do calendário via Graph.")
+    parser = argparse.ArgumentParser(description="Manage calendar events via Microsoft Graph.")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_list = sub.add_parser("list", help="Lista próximos eventos")
-    p_list.add_argument("--start", help="Início (ISO). Default agora.")
-    p_list.add_argument("--end", help="Fim (ISO). Default +7d.")
+    p_list = sub.add_parser("list", help="List upcoming events.")
+    p_list.add_argument("--start", help="Start (ISO). Default: now.")
+    p_list.add_argument("--end", help="End (ISO). Default: +7 days.")
     p_list.add_argument("--top", type=int, default=20)
     p_list.add_argument("--tz", default="UTC")
 
-    p_create = sub.add_parser("create", help="Cria evento")
+    p_create = sub.add_parser("create", help="Create event.")
     p_create.add_argument("--subject", required=True)
     p_create.add_argument("--start", required=True, help="YYYY-MM-DDTHH:MM")
     p_create.add_argument("--end", required=True, help="YYYY-MM-DDTHH:MM")
@@ -48,10 +48,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_create.add_argument("--body")
     p_create.add_argument("--location")
     p_create.add_argument("--attendees", nargs="*")
-    p_create.add_argument("--online", action="store_true", help="marca como reunião online")
+    p_create.add_argument("--online", action="store_true", help="Mark as online meeting.")
 
-    p_update = sub.add_parser("update", help="Atualiza evento existente")
-    p_update.add_argument("event_id", help="ID do evento")
+    p_update = sub.add_parser("update", help="Update an existing event.")
+    p_update.add_argument("event_id", help="Event ID")
     p_update.add_argument("--subject")
     p_update.add_argument("--start")
     p_update.add_argument("--end")
@@ -60,9 +60,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_update.add_argument("--location")
     p_update.add_argument("--attendees", nargs="*")
 
-    p_cancel = sub.add_parser("cancel", help="Cancela evento e notifica")
+    p_cancel = sub.add_parser("cancel", help="Cancel event and notify attendees.")
     p_cancel.add_argument("event_id")
-    p_cancel.add_argument("--message", default="Evento cancelado.")
+    p_cancel.add_argument("--message", default="Event canceled.")
 
     return parser
 
@@ -113,10 +113,10 @@ def handle_update(args: argparse.Namespace) -> None:
     if args.attendees is not None:
         patch["attendees"] = attendees_list(args.attendees)
     if not patch:
-        raise SystemExit("Nada para atualizar.")
+        raise SystemExit("No fields to update.")
     authorized_request("PATCH", graph_url(f"/me/events/{args.event_id}"), json=patch)
     append_log({"action": "cal_update", "id": args.event_id, "fields": list(patch.keys())})
-    print("Evento atualizado.")
+    print("Event updated.")
 
 
 def handle_cancel(args: argparse.Namespace) -> None:
@@ -126,7 +126,7 @@ def handle_cancel(args: argparse.Namespace) -> None:
         json={"Comment": args.message},
     )
     append_log({"action": "cal_cancel", "id": args.event_id})
-    print("Evento cancelado.")
+    print("Event canceled.")
 
 
 def handler():

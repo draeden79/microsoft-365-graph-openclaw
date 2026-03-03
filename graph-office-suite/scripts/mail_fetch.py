@@ -7,18 +7,18 @@ from utils import append_log, authorized_request, graph_url, cli_main
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Consulta mensagens no Outlook via Graph.")
-    parser.add_argument("--folder", default="Inbox", help="Pasta padrão.")
-    parser.add_argument("--top", type=int, default=25, help="Quantidade máxima de mensagens.")
-    parser.add_argument("--filter", help="Filtro OData customizado.")
-    parser.add_argument("--from", dest="from_addr", help="Filtra por remetente.")
-    parser.add_argument("--subject", help="Filtra por trecho no assunto.")
-    parser.add_argument("--unread", action="store_true", help="Somente não lidas.")
-    parser.add_argument("--select", nargs="*", help="Campos específicos (default: resumo).")
-    parser.add_argument("--id", help="Recupera mensagem específica por ID.")
-    parser.add_argument("--include-body", action="store_true", help="Inclui corpo completo na saída.")
-    parser.add_argument("--mark-read", action="store_true", help="Marca a mensagem --id como lida.")
-    parser.add_argument("--move-to", help="Move mensagem --id para outra pasta.")
+    parser = argparse.ArgumentParser(description="List or fetch Outlook messages via Microsoft Graph.")
+    parser.add_argument("--folder", default="Inbox", help="Mailbox folder name.")
+    parser.add_argument("--top", type=int, default=25, help="Maximum number of messages.")
+    parser.add_argument("--filter", help="Custom OData filter expression.")
+    parser.add_argument("--from", dest="from_addr", help="Filter by sender email address.")
+    parser.add_argument("--subject", help="Filter by subject snippet.")
+    parser.add_argument("--unread", action="store_true", help="Return only unread messages.")
+    parser.add_argument("--select", nargs="*", help="Specific fields to return (default: summary fields).")
+    parser.add_argument("--id", help="Fetch a specific message by ID.")
+    parser.add_argument("--include-body", action="store_true", help="Include full message body in output.")
+    parser.add_argument("--mark-read", action="store_true", help="Mark message passed with --id as read.")
+    parser.add_argument("--move-to", help="Move message passed with --id to destination folder ID.")
     return parser
 
 

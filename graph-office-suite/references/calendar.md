@@ -1,40 +1,40 @@
 # Calendar Reference
 
-## Listar eventos
+## List events
 
 ```
-python skills/graph-office-suite/scripts/calendar_sync.py list --start 2026-03-03T00:00Z --end 2026-03-05T00:00Z --top 20
+python graph-office-suite/scripts/calendar_sync.py list --start 2026-03-03T00:00Z --end 2026-03-05T00:00Z --top 20
 ```
 
-Sem parâmetros, `list` cobre agora até +7 dias.
+Without parameters, `list` covers now through +7 days.
 
-## Criar evento
+## Create event
 
 ```
-python skills/graph-office-suite/scripts/calendar_sync.py create \
-  --subject "Reunião com Danilo" \
+python graph-office-suite/scripts/calendar_sync.py create \
+  --subject "Meeting with team" \
   --start 2026-03-05T12:00 \
   --end 2026-03-05T13:00 \
-  --tz America/Sao_Paulo \
-  --body "Almoço no Sage" \
-  --location "Sage" \
-  --attendees danilo@example.com manuel@example.com \
+  --tz UTC \
+  --body "Weekly project sync" \
+  --location "Conference Room A" \
+  --attendees person1@example.com person2@example.com \
   --online
 ```
 
-## Atualizar evento
+## Update event
 
 ```
-python skills/graph-office-suite/scripts/calendar_sync.py update <eventId> --start 2026-03-05T12:30 --end 2026-03-05T13:30
+python graph-office-suite/scripts/calendar_sync.py update <eventId> --start 2026-03-05T12:30 --end 2026-03-05T13:30
 ```
 
-## Cancelar
+## Cancel event
 
 ```
-python skills/graph-office-suite/scripts/calendar_sync.py cancel <eventId> --message "Precisamos remarcar."
+python graph-office-suite/scripts/calendar_sync.py cancel <eventId> --message "Rescheduling this event."
 ```
 
-### Notas
-- Datas sempre em ISO 8601. Adicione `Z` para UTC explícito.
-- `--online` marca meeting Teams; remova se for reunião presencial.
-- Atualizações aceitam `--attendees` para sobrescrever a lista inteira.
+### Notes
+- Dates should use ISO 8601 format. Add `Z` for explicit UTC.
+- `--online` marks the event as a Teams meeting; omit for in-person events.
+- Updates accept `--attendees` and overwrite the full attendee list.

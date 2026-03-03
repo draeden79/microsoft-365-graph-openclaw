@@ -10,27 +10,27 @@ from utils import append_log, authorized_request, graph_url, cli_main
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Operações básicas no OneDrive pessoal via Graph")
+    parser = argparse.ArgumentParser(description="Basic OneDrive operations via Microsoft Graph.")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_list = sub.add_parser("list", help="Lista arquivos/pastas")
-    p_list.add_argument("--path", default="/", help="Caminho (ex.: /Documentos)")
+    p_list = sub.add_parser("list", help="List files/folders.")
+    p_list.add_argument("--path", default="/", help="Remote path (example: /Documents)")
     p_list.add_argument("--top", type=int, default=50)
 
-    p_upload = sub.add_parser("upload", help="Faz upload de arquivo")
+    p_upload = sub.add_parser("upload", help="Upload a file.")
     p_upload.add_argument("--local", required=True, type=Path)
-    p_upload.add_argument("--remote", required=True, help="Destino em OneDrive (/Documentos/arquivo.ext)")
+    p_upload.add_argument("--remote", required=True, help="OneDrive destination path (/Documents/file.ext)")
 
-    p_download = sub.add_parser("download", help="Baixa arquivo")
-    p_download.add_argument("--item-id", help="ID do item")
-    p_download.add_argument("--remote", help="Caminho remoto se não tiver ID")
+    p_download = sub.add_parser("download", help="Download a file.")
+    p_download.add_argument("--item-id", help="Drive item ID")
+    p_download.add_argument("--remote", help="Remote path (used when --item-id is not provided)")
     p_download.add_argument("--local", type=Path, required=True)
 
-    p_move = sub.add_parser("move", help="Move item para outra pasta")
+    p_move = sub.add_parser("move", help="Move item to another folder.")
     p_move.add_argument("item_id")
-    p_move.add_argument("--dest", required=True, help="ID ou caminho da pasta destino")
+    p_move.add_argument("--dest", required=True, help="Destination folder ID or path")
 
-    p_share = sub.add_parser("share", help="Gera link de compartilhamento")
+    p_share = sub.add_parser("share", help="Generate sharing link.")
     p_share.add_argument("item_id")
     p_share.add_argument("--scope", choices=["anonymous", "organization"], default="organization")
     p_share.add_argument("--type", choices=["view", "edit"], default="view")
@@ -113,7 +113,7 @@ def upload_file(local: Path, remote: str) -> None:
     remote_path = _normalize_remote_path(remote)
     parent_path, _, file_name = remote_path.rpartition("/")
     if not file_name:
-        raise SystemExit("Destino remoto deve incluir nome de arquivo.")
+        raise SystemExit("Remote destination must include a file name.")
     parent_path = parent_path or "/"
     if parent_path == "/":
         url = graph_url(f"/me/drive/root:/{file_name}:/content")
@@ -132,14 +132,14 @@ def resolve_item_path(remote: str) -> str:
 def download_file(item_id: str, remote: str, local: Path) -> None:
     if not item_id:
         if not remote:
-            raise SystemExit("Informe --item-id ou --remote")
+            raise SystemExit("Provide --item-id or --remote.")
         item_id = resolve_item_path(remote)
     metadata = authorized_request("GET", graph_url(f"/me/drive/items/{item_id}"))
     download_url = metadata.json()["@microsoft.graph.downloadUrl"]
     resp = authorized_request("GET", download_url)
     local.write_bytes(resp.content)
     append_log({"action": "drive_download", "item": item_id, "local": str(local)})
-    print(f"Arquivo salvo em {local}")
+    print(f"File saved to {local}")
 
 
 def move_item(item_id: str, dest: str) -> None:

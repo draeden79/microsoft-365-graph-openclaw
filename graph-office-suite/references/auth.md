@@ -1,35 +1,35 @@
 # Auth Reference
 
-## Perfis de autenticação recomendados
+## Recommended authentication profiles
 
-### Conta pessoal Microsoft (`@outlook.com`, `@hotmail.com`, Microsoft 365 Family)
+### Personal Microsoft account (`@outlook.com`, `@hotmail.com`, Microsoft 365 Family)
 
-- **Client ID padrão desta skill**: `9e5f94bc-e8a4-4e73-b8be-63364c29d753`
-- **Tenant padrão desta skill**: `consumers`
-- **Quando usar**: contas pessoais Microsoft (MSA), sem Entra ID corporativo.
+- **Skill default Client ID**: `9e5f94bc-e8a4-4e73-b8be-63364c29d753`
+- **Skill default tenant**: `consumers`
+- **Use when**: you authenticate with Microsoft personal accounts (MSA), without corporate Entra ID.
 
-### Conta corporativa/escolar (Microsoft Entra ID / Azure AD)
+### Work/school account (Microsoft Entra ID / Azure AD)
 
-- **Tenant recomendado**: `organizations` (ou GUID do tenant)
-- **Client ID**: app registration da organização (ou outro app permitido pelo tenant)
-- **Quando usar**: contas de trabalho/escola com políticas de tenant.
-- **Scopes sugeridos**:
+- **Recommended tenant**: `organizations` (or your tenant GUID)
+- **Client ID**: your organization app registration (or another tenant-approved app)
+- **Use when**: work/school accounts are controlled by tenant policy.
+- **Suggested scopes**:
   - `Mail.ReadWrite`
   - `Mail.Send`
   - `Calendars.ReadWrite`
   - `Files.ReadWrite.All`
-  - `Contacts.ReadWrite` *(remova se não precisar de contato)*
-  - `offline_access` (necessário para refresh token)
+  - `Contacts.ReadWrite` *(remove if contacts are not needed)*
+  - `offline_access` (required for refresh token)
 
-## Fluxo Device Code (assistido)
+## Assisted device-code flow
 
-1. Rodar (conta pessoal): `python graph-office-suite/scripts/graph_auth.py device-login --client-id 9e5f94bc-e8a4-4e73-b8be-63364c29d753 --tenant-id consumers --scopes Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite.All Contacts.ReadWrite offline_access`
-2. O script imprime **URL** e **código**. Copie ambos pro chat.
-3. O humano abre `https://microsoft.com/devicelogin`, cola o código e autentica com `tar.alitar@outlook.com`.
-4. Após consentir, o script grava `state/graph_auth.json` com `access_token`, `refresh_token`, horário de expiração e os escopos.
-5. Tokens são renovados automaticamente antes de cada chamada. Para forçar: `python graph-office-suite/scripts/graph_auth.py refresh`.
+1. Run (personal-account profile): `python graph-office-suite/scripts/graph_auth.py device-login --client-id 9e5f94bc-e8a4-4e73-b8be-63364c29d753 --tenant-id consumers --scopes Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite.All Contacts.ReadWrite offline_access`
+2. The script prints **URL** and **code**.
+3. Open `https://microsoft.com/devicelogin`, paste the code, and authorize.
+4. On success, the script saves `state/graph_auth.json` with `access_token`, `refresh_token`, expiration, and scopes.
+5. Tokens auto-refresh before requests. To force refresh: `python graph-office-suite/scripts/graph_auth.py refresh`.
 
-## Estrutura do arquivo state/graph_auth.json
+## `state/graph_auth.json` structure
 
 ```json
 {
@@ -44,15 +44,15 @@
 }
 ```
 
-Nunca versionar esse arquivo (`.gitignore`).
+Never commit this file (`.gitignore`).
 
-## Erros comuns
+## Common errors
 
-| Sintoma | Solução |
+| Symptom | Fix |
 | --- | --- |
-| `authorization_pending` | Aguarde — o usuário ainda não autorizou. |
-| `interaction_required` | O usuário precisa repetir o fluxo (token inválido/consent removido). |
-| `AADSTS50059` no `/devicecode` | Tenant incompatível com o tipo de conta. Para conta pessoal, use `--tenant-id consumers`. |
-| `AADSTS700016` no tenant `consumers` | `client_id` não é válido para Microsoft Account. Use app registration compatível com MSA. |
-| 401 constantes | Rode `graph_auth.py refresh`; se persistir, limpe estado e refaça device login. |
-| 403 (Access Denied) | Adicione o escopo correspondente e refaça consentimento. |
+| `authorization_pending` | Wait, user has not completed authorization yet. |
+| `interaction_required` | Re-run device login (token invalid/consent removed). |
+| `AADSTS50059` on `/devicecode` | Tenant is incompatible with account type. For personal accounts use `--tenant-id consumers`. |
+| `AADSTS700016` on `consumers` | `client_id` is not valid for Microsoft personal accounts. Use an MSA-compatible app registration. |
+| Repeated 401 errors | Run `graph_auth.py refresh`; if still failing, run `clear` and re-authenticate. |
+| 403 (Access Denied) | Add the required scope and grant consent again. |

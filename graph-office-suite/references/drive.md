@@ -1,6 +1,6 @@
 # OneDrive Reference
 
-## Listar itens
+## List items
 
 ```
 python graph-office-suite/scripts/drive_ops.py list --path / --top 20
@@ -11,30 +11,30 @@ python graph-office-suite/scripts/drive_ops.py list --path /Documents --top 20
 ## Upload
 
 ```
-python graph-office-suite/scripts/drive_ops.py upload --local arquivos/briefing.docx --remote /Clientes/briefing.docx
+python graph-office-suite/scripts/drive_ops.py upload --local files/briefing.docx --remote /Clients/briefing.docx
 ```
 
 ## Download
 
 ```
-python graph-office-suite/scripts/drive_ops.py download --remote /Clientes/briefing.docx --local /tmp/briefing.docx
+python graph-office-suite/scripts/drive_ops.py download --remote /Clients/briefing.docx --local /tmp/briefing.docx
 ```
 
-## Mover
+## Move
 
 ```
-python graph-office-suite/scripts/drive_ops.py move <itemId> --dest /Arquivo/Processado
+python graph-office-suite/scripts/drive_ops.py move <itemId> --dest /Archive/Processed
 ```
 
-## Compartilhar link
+## Share link
 
 ```
 python graph-office-suite/scripts/drive_ops.py share <itemId> --scope organization --type view
 ```
 
-### Dicas
-- Caminhos remotos sempre começam com `/`.
-- O script resolve pastas especiais por nome local e por alias global (ex.: `Documents` ou `Documentos` para documentos).
-- Para caminhos no root, `--path /` usa endpoint dedicado da raiz.
-- Para descobrir `item_id`, rode `list` e copie o campo `id`.
-- Upload chunked ainda não implementado; arquivos maiores que 4 MB exigem melhoria futura.
+### Notes
+- Remote paths should always start with `/`.
+- The script resolves localized special-folder names and global aliases (for example `Documents` or `Documentos`).
+- For root-level listing, `--path /` uses the dedicated root endpoint.
+- To get an `item_id`, run `list` and copy the `id` field.
+- Chunked upload is not implemented yet; large files require upload session support.

@@ -1,93 +1,93 @@
 ---
 name: graph-office-suite
-description: Operar Outlook (e-mail), Calendário e OneDrive via Microsoft Graph com OAuth assistido (device code), envio/consulta de emails, gestão de eventos e arquivos. Use quando precisar ler ou enviar mensagens, atualizar agenda ou manipular arquivos diretamente pelo Graph.
+description: Operate Outlook email, Calendar, and OneDrive via Microsoft Graph with assisted OAuth (device code). Includes email read/send, calendar operations, and file management.
 ---
 
 # Graph Office Suite Skill
 
-## 1. Pré-requisitos rápidos
-1. Python 3 com `requests` instalado (já presente neste ambiente).
-2. Variáveis padrão:
-   - Client ID (conta pessoal): `9e5f94bc-e8a4-4e73-b8be-63364c29d753`
-   - Tenant (conta pessoal): `consumers`
-   - Escopos default: `Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite.All Contacts.ReadWrite offline_access`
-   - Para conta corporativa/escolar, troque para `--tenant-id organizations` (ou GUID) e o `--client-id` do tenant.
-3. Tokens ficam em `state/graph_auth.json` (automaticamente gitignored).
+## 1. Quick prerequisites
+1. Python 3 with `requests` installed.
+2. Default auth values:
+   - Client ID (personal-account default): `9e5f94bc-e8a4-4e73-b8be-63364c29d753`
+   - Tenant (personal-account default): `consumers`
+   - Default scopes: `Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite.All Contacts.ReadWrite offline_access`
+   - For work/school accounts, use `--tenant-id organizations` (or tenant GUID) and a tenant-approved `--client-id`.
+3. Tokens are stored in `state/graph_auth.json` (ignored by git).
 
-## 2. Fluxo OAuth assistido (Device Code)
-1. Rode o script:  
+## 2. Assisted OAuth flow (Device Code)
+1. Run:
    ```bash
    python graph-office-suite/scripts/graph_auth.py device-login \
      --client-id 9e5f94bc-e8a4-4e73-b8be-63364c29d753 \
      --tenant-id consumers \
      --scopes Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite.All Contacts.ReadWrite offline_access
    ```
-2. Ele imprime **URL** e **código**. Cole ambos no chat para o Manuel autorizar.
-3. Assim que ele confirmar em `https://microsoft.com/devicelogin`, o token+refresh token serão salvos.
-4. Para acompanhar ou renovar manualmente:  
+2. The script prints a **URL** and **device code**.
+3. Open `https://microsoft.com/devicelogin`, enter the code, and approve with the target account.
+4. Check and manage auth state:
    - `python graph-office-suite/scripts/graph_auth.py status`  
    - `python graph-office-suite/scripts/graph_auth.py refresh`  
    - `python graph-office-suite/scripts/graph_auth.py clear`
-5. Os demais scripts chamam `utils.get_access_token()` que renova automaticamente ao detectar expiração.
+5. Other scripts call `utils.get_access_token()`, which refreshes tokens automatically when needed.
 
-> Referência detalhada em [`references/auth.md`](references/auth.md).
+Detailed reference: [`references/auth.md`](references/auth.md).
 
-## 3. Operações de e-mail
-- **Listar/filtrar**: `python skills/graph-office-suite/scripts/mail_fetch.py --folder Inbox --top 20 --unread`
-- **Buscar mensagem específica**: `... --id <messageId> --include-body --mark-read`
-- **Mover**: adicionar `--move-to <folderId>` no comando acima.
-- **Enviar** (sempre com `saveToSentItems` ativado):
+## 3. Email operations
+- **List/filter**: `python graph-office-suite/scripts/mail_fetch.py --folder Inbox --top 20 --unread`
+- **Fetch specific message**: `... --id <messageId> --include-body --mark-read`
+- **Move message**: add `--move-to <folderId>` to the command above.
+- **Send email** (`saveToSentItems` enabled by default):
   ```bash
-  python skills/graph-office-suite/scripts/mail_send.py \
-    --to thais@example.com \
-    --subject "Atualização" \
+  python graph-office-suite/scripts/mail_send.py \
+    --to user@example.com \
+    --subject "Update" \
     --body-file replies/thais.html --html \
-    --cc manuel@example.com \
-    --attachment docs/proposta.pdf
+    --cc teammate@example.com \
+    --attachment docs/proposal.pdf
   ```
-- Use `--no-save-copy` somente se houver motivo para não registrar em Sent.
+- Use `--no-save-copy` only when you intentionally do not want Sent Items storage.
 
-Mais exemplos e filtros em [`references/mail.md`](references/mail.md).
+More examples and filters: [`references/mail.md`](references/mail.md).
 
-## 4. Calendário
-- **Listar janela personalizada**:
+## 4. Calendar operations
+- **List custom date window**:
   ```bash
-  python skills/graph-office-suite/scripts/calendar_sync.py list \
+  python graph-office-suite/scripts/calendar_sync.py list \
     --start 2026-03-03T00:00Z --end 2026-03-05T23:59Z --top 50
   ```
-- **Criar evento Teams/presencial**: usar subcomando `create` com `--online` quando quiser link Teams.
-- **Atualizar/cancelar** eventos pelo `event_id` retornado no JSON.
+- **Create Teams or in-person event**: use `create`; add `--online` for Teams link.
+- **Update/cancel** events by `event_id` returned in JSON output.
 
-Modelos completos em [`references/calendar.md`](references/calendar.md).
+Full examples: [`references/calendar.md`](references/calendar.md).
 
-## 5. OneDrive / Arquivos
-- **Listar pastas**: `python graph-office-suite/scripts/drive_ops.py list --path /`
-- **Upload**: `... upload --local notas/briefing.docx --remote /Clientes/briefing.docx`
-- **Download**: `... download --remote /Clientes/briefing.docx --local /tmp/briefing.docx`
-- **Mover** ou **gerar link** com os subcomandos `move` e `share`.
-- O script trata aliases/localização de pastas especiais (ex.: `Documents`/`Documentos`).
+## 5. OneDrive / Files
+- **List folders/files**: `python graph-office-suite/scripts/drive_ops.py list --path /`
+- **Upload**: `... upload --local notes/briefing.docx --remote /Clients/briefing.docx`
+- **Download**: `... download --remote /Clients/briefing.docx --local /tmp/briefing.docx`
+- **Move / share links**: use `move` and `share` subcommands.
+- The script resolves localized/special-folder aliases (for example `Documents` and `Documentos`).
 
-Detalhes adicionais em [`references/drive.md`](references/drive.md).
+More details: [`references/drive.md`](references/drive.md).
 
-## 6. Contatos (opcional)
-Os escopos incluem `Contacts.ReadWrite`. Para operações pontuais, use o endpoint `/me/contacts`. Exemplos mínimos:
+## 6. Contacts (optional)
+Scopes include `Contacts.ReadWrite`. For quick operations, call `/me/contacts`:
 ```bash
-curl -H "Authorization: Bearer $(python - <<<'from skills.graph-office-suite.scripts.utils import get_access_token; print(get_access_token())')" \
+curl -H "Authorization: Bearer <ACCESS_TOKEN>" \
   https://graph.microsoft.com/v1.0/me/contacts
 ```
-(Adicione scripts dedicados quando surgir demanda.)
+(Add dedicated scripts if contacts usage grows.)
 
-## 7. Convenções e logging
-- Cada script registra uma linha JSON em `state/graph_ops.log` contendo timestamp, ação e parâmetros relevantes.
-- Tokens e logs nunca devem ser versionados.
-- Pastas/scripts assumem execução a partir da raiz do workspace (`/home/ubuntu/.openclaw/workspace`). Ajuste caminhos se rodar de outro diretório.
+## 7. Logging and conventions
+- Each script appends one JSON line to `state/graph_ops.log` with timestamp, action, and key parameters.
+- Tokens and logs must never be committed.
+- Commands assume execution from the repository root. Adjust paths if running elsewhere.
 
-## 8. Solução de problemas
-| Sintoma | Ação |
+## 8. Troubleshooting
+| Symptom | Action |
 | --- | --- |
-| 401/invalid_grant | Rode `graph_auth.py refresh`; se falhar, execute `clear` e refaça o fluxo device code. |
-| 403/AccessDenied | Escopo faltando ou licença inadequada. Repita device login com o escopo solicitado. |
-| 429/Throttled | Scripts já fazem retry básico; espere alguns segundos e tente novamente. |
-| `requests.exceptions.SSLError` | Verifique hora/data do sistema. |
+| 401/invalid_grant | Run `graph_auth.py refresh`; if it fails, run `clear` and repeat device login. |
+| 403/AccessDenied | Missing scope or licensing/policy issue. Re-run device login with required scope(s). |
+| 429/Throttled | Scripts do basic retry; wait a few seconds and retry. |
+| `requests.exceptions.SSLError` | Verify local system date/time and TLS trust chain. |
 
-Com isso, o skill cobre leitura/escrita de e-mails, agenda e arquivos pelo Graph partindo de um único fluxo OAuth autorizado pelo Manuel.
+This skill provides a single OAuth-driven workflow for email, calendar, and file operations via Microsoft Graph.

@@ -33,11 +33,11 @@ def warn_if_missing_core_scopes(scopes: List[str], context: str) -> None:
         return
     joined = ", ".join(missing)
     print(
-        f"[aviso] Escopos ausentes para uso completo da skill ({context}): {joined}.",
+        f"[warning] Missing scopes for full skill usage ({context}): {joined}.",
         file=sys.stderr,
     )
     print(
-        "[aviso] Reautentique incluindo os escopos padrão para e-mail + calendário.",
+        "[warning] Re-authenticate with the default email + calendar scopes.",
         file=sys.stderr,
     )
 
@@ -57,7 +57,7 @@ def poll_for_token(device_data: dict, client_id: str, tenant_id: str) -> dict:
     interval = int(device_data.get("interval", 5))
     expires_in = int(device_data.get("expires_in", 900))
     deadline = time.time() + expires_in
-    print("Aguardando autenticação...", flush=True)
+    print("Waiting for authorization...", flush=True)
     while time.time() < deadline:
         time.sleep(interval)
         try:
@@ -86,10 +86,10 @@ def command_device_login(args: argparse.Namespace) -> None:
     warn_if_missing_core_scopes(scopes, "device-login")
     device = request_device_code(client_id, scopes, tenant_id)
     verification_uri = device.get("verification_uri") or device.get("verification_uri_complete")
-    print("=== Autorize o acesso ===")
+    print("=== Authorize access ===")
     print(f"URL: {verification_uri}")
-    print(f"Código: {device['user_code']}")
-    print("Insira o código acima e confirme com a conta desejada.")
+    print(f"Code: {device['user_code']}")
+    print("Enter the code above and continue with your target account.")
     token = poll_for_token(device, client_id, tenant_id)
     state = {
         "client_id": client_id,
@@ -99,13 +99,13 @@ def command_device_login(args: argparse.Namespace) -> None:
     }
     save_auth_state(state)
     append_log({"action": "auth_login", "tenant": tenant_id, "scopes": scopes})
-    print("Autorizado com sucesso. Tokens salvos em state/graph_auth.json")
+    print("Authorization successful. Tokens saved to state/graph_auth.json")
 
 
 def command_refresh(_: argparse.Namespace) -> None:
     state = load_auth_state()
     if not state.get("token"):
-        raise RuntimeError("Nenhum token encontrado. Rode device-login primeiro.")
+        raise RuntimeError("No token found. Run device-login first.")
     token = _request_token(
         {
             "client_id": state.get("client_id", DEFAULT_CLIENT_ID),
@@ -118,30 +118,30 @@ def command_refresh(_: argparse.Namespace) -> None:
     state["token"] = token
     save_auth_state(state)
     append_log({"action": "auth_refresh"})
-    print("Token atualizado.")
+    print("Token refreshed.")
 
 
 def command_status(_: argparse.Namespace) -> None:
     state = load_auth_state()
     if not state:
-        print("Sem estado salvo.")
+        print("No saved auth state.")
         return
     token = state.get("token")
     scopes = state.get("scopes", [])
-    warn_if_missing_core_scopes(scopes, "estado salvo")
+    warn_if_missing_core_scopes(scopes, "saved state")
     expires = token.get("expires_at") if token else None
     seconds = int(expires - time.time()) if expires else None
     print(json_summary(state))
     if seconds is not None:
-        print(f"Expira em {seconds} segundos (margem de {TOKEN_SAFETY_MARGIN}s).")
-        print("Expirado?", token_expired(token))
+        print(f"Expires in {seconds} seconds (safety margin: {TOKEN_SAFETY_MARGIN}s).")
+        print("Expired?", token_expired(token))
 
 
 def command_clear(_: argparse.Namespace) -> None:
     if AUTH_FILE.exists():
         AUTH_FILE.unlink()
     append_log({"action": "auth_clear"})
-    print("Estado de autenticação removido.")
+    print("Authentication state removed.")
 
 
 def json_summary(state: dict) -> str:
@@ -157,17 +157,17 @@ def json_summary(state: dict) -> str:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Gerencia OAuth Device Code para Microsoft Graph.")
+    parser = argparse.ArgumentParser(description="Manage OAuth device-code authentication for Microsoft Graph.")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_login = sub.add_parser("device-login", help="Inicia fluxo device code.")
-    p_login.add_argument("--client-id", help="Client ID a usar", default=DEFAULT_CLIENT_ID)
-    p_login.add_argument("--tenant-id", help="Tenant (organizations, common ou GUID)", default=DEFAULT_TENANT)
-    p_login.add_argument("--scopes", nargs="+", help="Escopos a solicitar", default=DEFAULT_SCOPES)
+    p_login = sub.add_parser("device-login", help="Start device-code sign-in flow.")
+    p_login.add_argument("--client-id", help="Client ID to use", default=DEFAULT_CLIENT_ID)
+    p_login.add_argument("--tenant-id", help="Tenant (consumers, organizations, common, or GUID)", default=DEFAULT_TENANT)
+    p_login.add_argument("--scopes", nargs="+", help="Scopes to request", default=DEFAULT_SCOPES)
 
-    sub.add_parser("refresh", help="Força refresh imediato do token.")
-    sub.add_parser("status", help="Mostra estado atual do token.")
-    sub.add_parser("clear", help="Apaga tokens salvos.")
+    sub.add_parser("refresh", help="Force immediate token refresh.")
+    sub.add_parser("status", help="Show current auth/token status.")
+    sub.add_parser("clear", help="Delete saved token state.")
     return parser
 
 
@@ -184,7 +184,7 @@ def main() -> None:
     elif command == "clear":
         command_clear(args)
     else:
-        parser.error("Comando desconhecido")
+        parser.error("Unknown command")
 
 
 if __name__ == "__main__":

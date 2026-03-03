@@ -8,18 +8,18 @@ from utils import append_log, authorized_request, encode_attachment, graph_url, 
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Envio de emails via Graph.")
-    parser.add_argument("--to", nargs="+", required=True, help="Destinatários principais.")
+    parser = argparse.ArgumentParser(description="Send emails via Microsoft Graph.")
+    parser.add_argument("--to", nargs="+", required=True, help="Primary recipients.")
     parser.add_argument("--subject", required=True)
     body_group = parser.add_mutually_exclusive_group(required=True)
-    body_group.add_argument("--body", help="Conteúdo direto em texto.")
-    body_group.add_argument("--body-file", type=Path, help="Arquivo com o corpo.")
-    parser.add_argument("--html", action="store_true", help="Interpreta corpo como HTML.")
-    parser.add_argument("--cc", nargs="*", default=[], help="Destinatários em cópia.")
-    parser.add_argument("--bcc", nargs="*", default=[], help="Cópia oculta.")
-    parser.add_argument("--attachment", nargs="*", default=[], help="Arquivos para anexar.")
+    body_group.add_argument("--body", help="Inline message content.")
+    body_group.add_argument("--body-file", type=Path, help="Path to a file containing message body.")
+    parser.add_argument("--html", action="store_true", help="Treat body content as HTML.")
+    parser.add_argument("--cc", nargs="*", default=[], help="CC recipients.")
+    parser.add_argument("--bcc", nargs="*", default=[], help="BCC recipients.")
+    parser.add_argument("--attachment", nargs="*", default=[], help="File paths to attach.")
     parser.add_argument("--importance", choices=["Low", "Normal", "High"], default="Normal")
-    parser.add_argument("--no-save-copy", dest="save_copy", action="store_false", help="Não gravar em Sent Items.")
+    parser.add_argument("--no-save-copy", dest="save_copy", action="store_false", help="Do not save a copy in Sent Items.")
     parser.set_defaults(save_copy=True)
     return parser
 
@@ -61,7 +61,7 @@ def handler():
         "cc": args.cc,
         "attachments": [Path(p).name for p in args.attachment],
     })
-    print("Email enviado com sucesso.")
+    print("Email sent successfully.")
 
 
 if __name__ == "__main__":
