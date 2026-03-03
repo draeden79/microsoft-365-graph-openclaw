@@ -56,7 +56,7 @@ More examples and filters: [`references/mail.md`](references/mail.md).
     --start 2026-03-03T00:00Z --end 2026-03-05T23:59Z --top 50
   ```
 - **Create Teams or in-person event**: use `create`; add `--online` for Teams link.
-- For online events, the script also writes the Teams join URL into the event body to ensure participants can always find the link.
+- For personal Microsoft accounts (`tenant=consumers`), Teams meeting provisioning via Graph might not return a join URL; create the Teams meeting in Outlook/Teams first and add the resulting link to the event body when needed.
 - **Update/cancel** events by `event_id` returned in JSON output.
 
 Full examples: [`references/calendar.md`](references/calendar.md).

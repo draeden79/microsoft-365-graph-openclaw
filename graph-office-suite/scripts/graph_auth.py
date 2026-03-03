@@ -49,6 +49,15 @@ def warn_if_missing_core_scopes(scopes: List[str], context: str) -> None:
     )
 
 
+def validate_scope_tenant_compatibility(scopes: List[str], tenant_id: str) -> None:
+    has_online_meetings_scope = any(scope.startswith("OnlineMeetings.") for scope in scopes)
+    if has_online_meetings_scope and tenant_id.lower() == "consumers":
+        raise ValueError(
+            "OnlineMeetings.* scopes are not supported for tenant=consumers in this workflow. "
+            "Remove OnlineMeetings scopes for personal accounts."
+        )
+
+
 def request_device_code(client_id: str, scopes: List[str], tenant_id: str) -> dict:
     authority = _authority(tenant_id)
     resp = requests.post(
@@ -90,6 +99,7 @@ def command_device_login(args: argparse.Namespace) -> None:
     scopes = args.scopes or DEFAULT_SCOPES
     client_id = args.client_id or DEFAULT_CLIENT_ID
     tenant_id = args.tenant_id or DEFAULT_TENANT
+    validate_scope_tenant_compatibility(scopes, tenant_id)
     warn_if_missing_core_scopes(scopes, "device-login")
     device = request_device_code(client_id, scopes, tenant_id)
     verification_uri = device.get("verification_uri") or device.get("verification_uri_complete")

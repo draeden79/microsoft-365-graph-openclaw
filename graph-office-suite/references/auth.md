@@ -54,5 +54,6 @@ Never commit this file (`.gitignore`).
 | `interaction_required` | Re-run device login (token invalid/consent removed). |
 | `AADSTS50059` on `/devicecode` | Tenant is incompatible with account type. For personal accounts use `--tenant-id consumers`. |
 | `AADSTS700016` on `consumers` | `client_id` is not valid for Microsoft personal accounts. Use an MSA-compatible app registration. |
+| `AADSTS70011 invalid_scope` with `OnlineMeetings.*` on `consumers` | `OnlineMeetings.*` scopes are not supported in this workflow for personal accounts. Remove these scopes and keep default scopes. |
 | Repeated 401 errors | Run `graph_auth.py refresh`; if still failing, run `clear` and re-authenticate. |
 | 403 (Access Denied) | Add the required scope and grant consent again. |

@@ -22,7 +22,8 @@ python graph-office-suite/scripts/calendar_sync.py create \
   --online
 ```
 
-When `--online` is enabled, the script creates a Teams meeting and appends the join link to the event body, so participants always see the link in the invitation details.
+When `--online` is enabled, the script requests an online meeting and appends the join link to the event body if Graph returns one.
+For personal Microsoft accounts (`tenant=consumers`), Graph can return no join URL even when `--online` is set.
 
 ## Update event
 
@@ -38,5 +39,6 @@ python graph-office-suite/scripts/calendar_sync.py cancel <eventId> --message "R
 
 ### Notes
 - Dates should use ISO 8601 format. Add `Z` for explicit UTC.
-- `--online` marks the event as a Teams meeting; omit for in-person events.
+- `--online` requests a Teams meeting; omit for in-person events.
+- `OnlineMeetings.*` scopes are not supported for `tenant=consumers` in this workflow.
 - Updates accept `--attendees` and overwrite the full attendee list.
