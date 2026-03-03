@@ -22,6 +22,8 @@ python graph-office-suite/scripts/calendar_sync.py create \
   --online
 ```
 
+When `--online` is enabled, the script creates a Teams meeting and appends the join link to the event body, so participants always see the link in the invitation details.
+
 ## Update event
 
 ```

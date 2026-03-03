@@ -94,8 +94,26 @@ def handle_create(args: argparse.Namespace) -> None:
         event["isOnlineMeeting"] = True
         event["onlineMeetingProvider"] = "teamsForBusiness"
     resp = authorized_request("POST", graph_url("/me/events"), json=event)
-    append_log({"action": "cal_create", "subject": args.subject, "id": resp.json().get("id")})
-    print(json.dumps(resp.json(), indent=2))
+    created = resp.json()
+    event_id = created.get("id")
+    if args.online and event_id:
+        join_url = (created.get("onlineMeeting") or {}).get("joinUrl") or created.get("onlineMeetingUrl")
+        if join_url:
+            existing_body = args.body or ""
+            if join_url not in existing_body:
+                if existing_body.strip():
+                    body_content = f"{existing_body}\n\nJoin Microsoft Teams meeting: {join_url}"
+                else:
+                    body_content = f"Join Microsoft Teams meeting: {join_url}"
+                authorized_request(
+                    "PATCH",
+                    graph_url(f"/me/events/{event_id}"),
+                    json={"body": {"contentType": "Text", "content": body_content}},
+                )
+                created["body"] = {"contentType": "Text", "content": body_content}
+                created["teamsJoinUrl"] = join_url
+    append_log({"action": "cal_create", "subject": args.subject, "id": event_id, "online": args.online})
+    print(json.dumps(created, indent=2))
 
 
 def handle_update(args: argparse.Namespace) -> None:
