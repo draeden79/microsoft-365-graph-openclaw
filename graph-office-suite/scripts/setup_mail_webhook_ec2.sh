@@ -171,7 +171,7 @@ Description=Renew Graph Mail Subscription (manual id required)
 Type=oneshot
 EnvironmentFile=$ENV_FILE
 WorkingDirectory=$REPO_ROOT
-ExecStart=/bin/bash -lc 'if [[ -z "${GRAPH_MAIL_SUBSCRIPTION_ID:-}" ]]; then echo "Set GRAPH_MAIL_SUBSCRIPTION_ID in /etc/default/graph-mail-webhook"; exit 1; fi; $PYTHON_BIN $SUB_SCRIPT renew --id "${GRAPH_MAIL_SUBSCRIPTION_ID}" --minutes 4200'
+ExecStart=/bin/bash -lc 'if [[ -z "\${GRAPH_MAIL_SUBSCRIPTION_ID:-}" ]]; then echo "Set GRAPH_MAIL_SUBSCRIPTION_ID in /etc/default/graph-mail-webhook"; exit 1; fi; $PYTHON_BIN $SUB_SCRIPT renew --id "\${GRAPH_MAIL_SUBSCRIPTION_ID}" --minutes 4200'
 EOF
 
 cat > /etc/systemd/system/graph-mail-subscription-renew.timer <<EOF
