@@ -39,8 +39,8 @@ REPO_ROOT="$(pwd)"
 CREATE_SUBSCRIPTION="true"
 ENV_FILE="/etc/default/graph-mail-webhook"
 TMP_SUB_ID=""
-OPENCLAW_HOOK_URL=""
-OPENCLAW_HOOK_TOKEN=""
+OPENCLAW_HOOK_URL="${OPENCLAW_HOOK_URL:-}"
+OPENCLAW_HOOK_TOKEN="${OPENCLAW_HOOK_TOKEN:-}"
 PASS_COUNT=0
 SKIP_COUNT=0
 
@@ -175,20 +175,45 @@ if [[ -n "$TEST_EMAIL" ]]; then
 
   echo "[5/6] Confirming inbox delivery (poll up to 60s)..."
   FOUND="false"
+  LAST_FETCH_ERROR=""
   for _ in $(seq 1 12); do
-    RESULT="$(python3 "$FETCH_SCRIPT" --folder Inbox --top 10 --subject "$TEST_SUBJECT" | python3 - <<'PY'
-import json, sys
-data = json.load(sys.stdin)
+    FETCH_OUTPUT=""
+    if FETCH_OUTPUT="$(python3 "$FETCH_SCRIPT" --folder Inbox --top 10 --subject "$TEST_SUBJECT" 2>&1)"; then
+      RESULT="$(python3 - <<'PY' "$FETCH_OUTPUT"
+import json
+import sys
+raw = sys.argv[1]
+try:
+    data = json.loads(raw)
+except Exception:
+    print("invalid")
+    raise SystemExit(0)
 print("ok" if data.get("value") else "no")
 PY
 )"
-    if [[ "$RESULT" == "ok" ]]; then
-      FOUND="true"
-      break
+      if [[ "$RESULT" == "ok" ]]; then
+        FOUND="true"
+        break
+      fi
+      if [[ "$RESULT" == "invalid" ]]; then
+        LAST_FETCH_ERROR="mail_fetch returned non-JSON output"
+      fi
+    else
+      LAST_FETCH_ERROR="$FETCH_OUTPUT"
+    fi
+    if [[ -n "$LAST_FETCH_ERROR" ]]; then
+      echo "[INFO] inbox poll retry; last fetch issue: ${LAST_FETCH_ERROR}" >&2
     fi
     sleep 5
   done
-  [[ "$FOUND" == "true" ]] || { echo "Email not found in Inbox by subject within timeout." >&2; exit 1; }
+  if [[ "$FOUND" != "true" ]]; then
+    if [[ -n "$LAST_FETCH_ERROR" ]]; then
+      echo "Email not confirmed due fetch errors. Last error:" >&2
+      echo "$LAST_FETCH_ERROR" >&2
+    fi
+    echo "Email not found in Inbox by subject within timeout." >&2
+    exit 1
+  fi
   pass "Real email send + Inbox confirmation"
 else
   skip "Real email send (add --test-email)"
