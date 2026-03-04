@@ -128,7 +128,7 @@ More details: [`references/contacts.md`](references/contacts.md).
     --hook-token "<OPENCLAW_HOOK_TOKEN>" \
     --configure-openclaw-hooks \
     --openclaw-config "/etc/openclaw/config.json5" \
-    --openclaw-service-name "openclaw" \
+    --openclaw-service-name "auto" \
     --openclaw-hooks-path "/hooks" \
     --openclaw-allow-request-session-key true \
     --test-email "tar.alitar@outlook.com"

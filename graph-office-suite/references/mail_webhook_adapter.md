@@ -86,7 +86,7 @@ sudo bash graph-office-suite/scripts/run_mail_webhook_e2e_setup.sh \
   --hook-token "<OPENCLAW_HOOK_TOKEN>" \
   --configure-openclaw-hooks \
   --openclaw-config "/etc/openclaw/config.json5" \
-  --openclaw-service-name "openclaw" \
+  --openclaw-service-name "auto" \
   --openclaw-hooks-path "/hooks" \
   --openclaw-allow-request-session-key true \
   --test-email "tar.alitar@outlook.com"

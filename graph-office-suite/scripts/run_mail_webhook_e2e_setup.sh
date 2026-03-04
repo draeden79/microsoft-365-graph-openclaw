@@ -15,8 +15,8 @@ Usage:
     --domain graphhook.alitar.one \
     --hook-token "<OPENCLAW_HOOK_TOKEN>" \
     [--configure-openclaw-hooks] \
-    [--openclaw-config /etc/openclaw/config.json5] \
-    [--openclaw-service-name openclaw] \
+    [--openclaw-config /path/to/openclaw.json] \
+    [--openclaw-service-name auto] \
     [--openclaw-hooks-path /hooks] \
     [--openclaw-allow-request-session-key true] \
     [--hook-url http://127.0.0.1:18789/hooks/agent] \
@@ -56,7 +56,7 @@ MINUTES="4200"
 TEST_EMAIL=""
 CONFIGURE_OPENCLAW_HOOKS="false"
 OPENCLAW_CONFIG=""
-OPENCLAW_SERVICE_NAME="openclaw"
+OPENCLAW_SERVICE_NAME="auto"
 OPENCLAW_HOOKS_PATH="/hooks"
 OPENCLAW_ALLOW_REQUEST_SESSION_KEY="true"
 
@@ -115,8 +115,39 @@ if [[ "$OPENCLAW_HOOKS_PATH" != /* ]]; then
 fi
 
 if [[ "$CONFIGURE_OPENCLAW_HOOKS" == "true" ]]; then
+  ACTING_USER="${SUDO_USER:-$USER}"
+  ACTING_HOME="$(eval echo "~$ACTING_USER")"
+
   if [[ -z "$OPENCLAW_CONFIG" ]]; then
-    echo "When using --configure-openclaw-hooks, provide --openclaw-config path." >&2
+    CANDIDATES=(
+      "/etc/openclaw/config.json5"
+      "/etc/openclaw/config.json"
+      "/opt/openclaw/config.json5"
+      "/opt/openclaw/openclaw.json"
+      "$HOME/.openclaw/config.json5"
+      "$HOME/.openclaw/config.json"
+      "$HOME/.openclaw/openclaw.json"
+      "$HOME/.config/openclaw/config.json5"
+      "$HOME/.config/openclaw/config.json"
+      "$ACTING_HOME/.openclaw/config.json5"
+      "$ACTING_HOME/.openclaw/config.json"
+      "$ACTING_HOME/.openclaw/openclaw.json"
+      "$ACTING_HOME/.config/openclaw/config.json5"
+      "$ACTING_HOME/.config/openclaw/config.json"
+    )
+    for cand in "${CANDIDATES[@]}"; do
+      if [[ -f "$cand" ]]; then
+        OPENCLAW_CONFIG="$cand"
+        break
+      fi
+    done
+  fi
+
+  if [[ -z "$OPENCLAW_CONFIG" ]]; then
+    echo "OpenClaw config not found automatically." >&2
+    echo "Provide --openclaw-config with the correct path." >&2
+    echo "Try discovery on host:" >&2
+    echo "  sudo sh -lc 'ls -la /etc/openclaw /opt/openclaw ~/.openclaw ~/.config/openclaw 2>/dev/null'" >&2
     exit 1
   fi
   [[ -f "$OPENCLAW_CONFIG" ]] || { echo "OpenClaw config not found: $OPENCLAW_CONFIG" >&2; exit 1; }
@@ -270,9 +301,39 @@ print("OpenClaw hooks block updated.")
 PY
 
   echo "[OpenClaw] Restarting service: $OPENCLAW_SERVICE_NAME"
-  systemctl restart "$OPENCLAW_SERVICE_NAME"
+  if [[ "$OPENCLAW_SERVICE_NAME" == "auto" ]]; then
+    if command -v openclaw >/dev/null 2>&1; then
+      if [[ -n "${SUDO_USER:-}" ]]; then
+        sudo -u "$ACTING_USER" openclaw gateway restart || true
+      else
+        openclaw gateway restart || true
+      fi
+    fi
+    if [[ -n "${SUDO_USER:-}" ]]; then
+      sudo -u "$ACTING_USER" systemctl --user restart openclaw-gateway.service || true
+    else
+      systemctl --user restart openclaw-gateway.service || true
+    fi
+  else
+    systemctl restart "$OPENCLAW_SERVICE_NAME" || true
+    if [[ -n "${SUDO_USER:-}" ]]; then
+      sudo -u "$ACTING_USER" systemctl --user restart "$OPENCLAW_SERVICE_NAME" || true
+    else
+      systemctl --user restart "$OPENCLAW_SERVICE_NAME" || true
+    fi
+  fi
   sleep 2
-  systemctl status "$OPENCLAW_SERVICE_NAME" --no-pager >/dev/null
+  if [[ "$OPENCLAW_SERVICE_NAME" == "auto" ]]; then
+    if command -v openclaw >/dev/null 2>&1; then
+      if [[ -n "${SUDO_USER:-}" ]]; then
+        sudo -u "$ACTING_USER" openclaw gateway status --no-probe >/dev/null || true
+      else
+        openclaw gateway status --no-probe >/dev/null || true
+      fi
+    fi
+  else
+    systemctl status "$OPENCLAW_SERVICE_NAME" --no-pager >/dev/null || true
+  fi
 
   echo "[OpenClaw] Running smoke tests..."
   curl -fsS -X POST "http://127.0.0.1:18789${OPENCLAW_HOOKS_PATH}/wake" \
