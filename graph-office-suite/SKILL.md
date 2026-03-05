@@ -92,6 +92,7 @@ More details: [`references/contacts.md`](references/contacts.md).
     --client-state "$GRAPH_WEBHOOK_CLIENT_STATE" \
     --minutes 4200
   ```
+  - Default resource is `me/messages` (recommended for better delivery coverage). Override with `--resource` only for advanced/scoped scenarios.
 - **Async worker** (dedupe + default wake signal to OpenClaw `/hooks/wake`):
   ```bash
   python graph-office-suite/scripts/mail_webhook_worker.py loop \
@@ -99,6 +100,7 @@ More details: [`references/contacts.md`](references/contacts.md).
     --hook-url "$OPENCLAW_HOOK_URL" \
     --hook-token "$OPENCLAW_HOOK_TOKEN"
   ```
+  - Default mode is `wake` (`/hooks/wake`, `mode=now`). Use `--hook-action agent` only when you explicitly need per-message rich payload delivery.
 - Worker queue files:
   - `state/mail_webhook_queue.jsonl`
   - `state/mail_webhook_dedupe.json`

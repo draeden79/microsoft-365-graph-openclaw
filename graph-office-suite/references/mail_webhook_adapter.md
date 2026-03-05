@@ -8,6 +8,10 @@ This guide documents the push architecture for mail notifications using Microsof
 - `mail_subscriptions.py`: Subscription lifecycle (`create`, `status`, `renew`, `delete`, `list`).
 - `mail_webhook_worker.py`: Async queue processing with dedupe + Graph message fetch + POST to OpenClaw.
 
+Architecture defaults used by this project:
+- Subscription resource default: `me/messages` (recommended for broader and more reliable delivery coverage).
+- Worker action default: `wake` (`/hooks/wake`, `mode=now`), with `agent` kept as optional advanced mode.
+
 ## 2) Webhook contract
 
 Endpoint:
@@ -177,6 +181,8 @@ python graph-office-suite/scripts/mail_subscriptions.py create \
   --minutes 4200
 ```
 
+Note: default resource is `me/messages`. Override with `--resource` only when you intentionally need narrower scope.
+
 Renew subscription:
 
 ```bash
@@ -193,6 +199,22 @@ python graph-office-suite/scripts/mail_webhook_worker.py loop \
   --hook-url "$OPENCLAW_HOOK_URL" \
   --hook-token "$OPENCLAW_HOOK_TOKEN"
 ```
+
+## 7.1) Daily observability
+
+Use one command for a full pipeline snapshot:
+
+```bash
+bash graph-office-suite/scripts/diagnose_mail_webhook_e2e.sh \
+  --domain graphhook.example.com \
+  --repo-root "$(pwd)" \
+  --lookback-minutes 30
+```
+
+Interpretation tips:
+- `VERDICT: READY_PIPELINE` means healthy services + recent real delivery evidence.
+- In `Recent webhook ops`, each JSON line includes `timestamp` (epoch) and `timestampUtc` (human-readable UTC) when available.
+- If no `POST /graph/mail ... 202` appears in adapter logs, re-send an external test email and inspect adapter logs with a shorter lookback window.
 
 ## 8) Acceptance test runbook
 

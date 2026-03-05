@@ -55,6 +55,9 @@ python graph-office-suite/scripts/mail_subscriptions.py create \
   --minutes 4200
 ```
 
+- Default resource is `me/messages` (broader and more resilient to routing/folder variations).
+- You can still scope manually with `--resource`, but `me/mailFolders('Inbox')/messages` may miss some real deliveries depending on mailbox behavior.
+
 ### Process notifications asynchronously
 
 ```
@@ -73,6 +76,12 @@ python graph-office-suite/scripts/mail_webhook_worker.py loop \
 ```
 python graph-office-suite/scripts/mail_subscriptions.py renew --id "<subscription-id>" --minutes 4200
 ```
+
+### Quick validation checklist (post-subscription)
+
+- Confirm adapter receives real deliveries: `journalctl -u graph-mail-webhook-adapter --since "15 minutes ago" | rg 'POST /graph/mail HTTP/1.1" 202'`
+- Confirm queue receives events: `wc -l state/mail_webhook_queue.jsonl`
+- Confirm worker processes items: `tail -n 80 state/graph_ops.log | rg 'mail_webhook_processed|mail_webhook_drop_max_retries'`
 
 See full setup, checklists, and troubleshooting in:
 `graph-office-suite/references/mail_webhook_adapter.md`.

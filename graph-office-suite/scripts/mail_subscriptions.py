@@ -8,7 +8,7 @@ from utils import append_log, authorized_request, cli_main, graph_url
 
 MAX_MAIL_SUBSCRIPTION_MINUTES = 4230
 DEFAULT_SUBSCRIPTION_MINUTES = 4200
-DEFAULT_RESOURCE = "me/mailFolders('Inbox')/messages"
+DEFAULT_RESOURCE = "me/messages"
 DEFAULT_CHANGE_TYPE = "created"
 
 
@@ -31,7 +31,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_create.add_argument("--notification-url", required=True, help="Public HTTPS webhook URL.")
     p_create.add_argument("--client-state", required=True, help="Client state secret for webhook validation.")
     p_create.add_argument("--minutes", type=int, default=DEFAULT_SUBSCRIPTION_MINUTES, help="Validity in minutes.")
-    p_create.add_argument("--resource", default=DEFAULT_RESOURCE, help="Graph resource path.")
+    p_create.add_argument(
+        "--resource",
+        default=DEFAULT_RESOURCE,
+        help="Graph resource path (default me/messages; Inbox-scoped resources can miss some deliveries).",
+    )
     p_create.add_argument("--change-type", default=DEFAULT_CHANGE_TYPE, help="Graph change type.")
     p_create.add_argument(
         "--lifecycle-notification-url",
