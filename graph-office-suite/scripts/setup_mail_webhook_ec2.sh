@@ -248,10 +248,30 @@ echo "[verify] Checking runtime status..."
 if [[ "$DRY_RUN" == "true" ]]; then
   info "[DRY-RUN] skip runtime service status checks"
 else
-  systemctl is-active --quiet caddy && ok "caddy is active" || { echo "[FAIL] caddy is not active"; exit 1; }
-  systemctl is-active --quiet graph-mail-webhook-adapter && ok "graph-mail-webhook-adapter is active" || { echo "[FAIL] graph-mail-webhook-adapter is not active"; exit 1; }
-  systemctl is-active --quiet graph-mail-webhook-worker && ok "graph-mail-webhook-worker is active" || { echo "[FAIL] graph-mail-webhook-worker is not active"; exit 1; }
-  systemctl is-active --quiet graph-mail-subscription-renew.timer && ok "graph-mail-subscription-renew.timer is active" || { echo "[FAIL] graph-mail-subscription-renew.timer is not active"; exit 1; }
+  if systemctl is-active --quiet caddy; then
+    ok "caddy is active"
+  else
+    echo "[FAIL] caddy is not active"
+    exit 1
+  fi
+  if systemctl is-active --quiet graph-mail-webhook-adapter; then
+    ok "graph-mail-webhook-adapter is active"
+  else
+    echo "[FAIL] graph-mail-webhook-adapter is not active"
+    exit 1
+  fi
+  if systemctl is-active --quiet graph-mail-webhook-worker; then
+    ok "graph-mail-webhook-worker is active"
+  else
+    echo "[FAIL] graph-mail-webhook-worker is not active"
+    exit 1
+  fi
+  if systemctl is-active --quiet graph-mail-subscription-renew.timer; then
+    ok "graph-mail-subscription-renew.timer is active"
+  else
+    echo "[FAIL] graph-mail-subscription-renew.timer is not active"
+    exit 1
+  fi
 fi
 
 if [[ "$DRY_RUN" == "true" ]]; then
