@@ -9,7 +9,7 @@ usage() {
 Usage:
   bash graph-office-suite/scripts/diagnose_mail_webhook_e2e.sh \
     --domain graphhook.example.com \
-    [--repo-root /path/to/openclaw-skills] \
+    [--repo-root /path/to/openclaw-graph-office-suite] \
     [--lookback-minutes 30] \
     [--subscription-id <id>] \
     [--skip-wake-probe]

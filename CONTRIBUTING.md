@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for improving `openclaw-skills`.
+Thanks for improving `openclaw-graph-office-suite`.
 
 ## Scope
 

@@ -13,7 +13,7 @@ Usage:
     [--client-state "<GRAPH_WEBHOOK_CLIENT_STATE>"] \
     [--adapter-port 8789] \
     [--adapter-path /graph/mail] \
-    [--repo-root /path/to/openclaw-skills] \
+    [--repo-root /path/to/openclaw-graph-office-suite] \
     [--create-subscription]
 
 Notes:
