@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for improving `openclaw-graph-office-suite`.
+Thanks for improving `microsoft-365-graph-openclaw`.
 
 ## Scope
 

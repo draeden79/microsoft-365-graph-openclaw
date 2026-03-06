@@ -1,11 +1,11 @@
 ---
-name: graph-office-suite
-description: Push-based Microsoft Graph for OpenClaw. Replace recurring inbox polling with webhook-triggered wake signals, plus mail/calendar/drive/contacts automation.
+name: microsoft-365-graph-openclaw
+description: Microsoft 365 Graph for OpenClaw with webhook-based wake signals. Reduce recurring LLM cost from inbox polling while managing Outlook mail, calendar, OneDrive, and contacts via Microsoft Graph.
 version: 0.1.3
 license: MIT
-homepage: https://github.com/draeden79/openclaw-graph-office-suite
-repository: https://github.com/draeden79/openclaw-graph-office-suite
-metadata: {"openclaw":{"homepage":"https://github.com/draeden79/openclaw-graph-office-suite","os":["linux","darwin","win32"],"primaryEnv":"OPENCLAW_HOOK_TOKEN","requires":{"bins":["python3","bash","curl"],"env":["OPENCLAW_HOOK_URL","OPENCLAW_HOOK_TOKEN","GRAPH_WEBHOOK_CLIENT_STATE","OPENCLAW_SESSION_KEY"]}}}
+homepage: https://github.com/draeden79/microsoft-365-graph-openclaw
+repository: https://github.com/draeden79/microsoft-365-graph-openclaw
+metadata: {"openclaw":{"homepage":"https://github.com/draeden79/microsoft-365-graph-openclaw","os":["linux","darwin","win32"],"primaryEnv":"OPENCLAW_HOOK_TOKEN","requires":{"bins":["python3","bash","curl"],"env":["OPENCLAW_HOOK_URL","OPENCLAW_HOOK_TOKEN","GRAPH_WEBHOOK_CLIENT_STATE","OPENCLAW_SESSION_KEY"]}}}
 security:
   summary: Push-first Graph integration with explicit hook token auth and clientState validation.
   notes:
@@ -14,7 +14,7 @@ security:
     - Prefer /hooks/wake default to avoid unnecessary isolated agent runs.
 ---
 
-# Graph Office Suite Skill
+# Microsoft 365 Graph for OpenClaw Skill
 
 ## 1. Quick prerequisites
 1. Python 3 with `requests` installed.

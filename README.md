@@ -1,12 +1,12 @@
-# openclaw-graph-office-suite
+# Microsoft 365 Graph for OpenClaw
 
-Push-based Microsoft Graph for OpenClaw.
+Microsoft 365 Graph for OpenClaw with webhook-based wake signals.
 
-Stop waking an LLM just to ask whether a new email arrived.
-This repository provides a webhook-driven Graph skill that wakes OpenClaw only when work actually happens, reducing recurring inbox polling overhead in self-hosted deployments.
+Reduce recurring LLM cost from inbox polling while managing Outlook mail, calendar, OneDrive, and contacts via Microsoft Graph.
+This repository provides a webhook-driven Graph skill that wakes OpenClaw only when work actually happens in self-hosted deployments.
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Release](https://img.shields.io/badge/release-v0.1.3-blue.svg)
+![Release](https://img.shields.io/badge/release-v0.1.4-blue.svg)
 ![CI](https://img.shields.io/badge/ci-github_actions-informational.svg)
 
 ## Why this exists
@@ -39,7 +39,7 @@ These numbers are illustrative. Push does not remove the cost of processing real
 ## What is included
 
 Skill:
-- `graph-office-suite`
+- `microsoft-365-graph-openclaw`
 
 Capabilities:
 - OAuth device-code auth with refresh handling

@@ -22,7 +22,7 @@ Usage:
     [--hook-url http://127.0.0.1:18789/hooks/wake] \
     [--session-key hook:graph-mail] \
     [--client-state "<GRAPH_WEBHOOK_CLIENT_STATE>"] \
-    [--repo-root /path/to/openclaw-graph-office-suite] \
+    [--repo-root /path/to/microsoft-365-graph-openclaw] \
     [--minutes 4200] \
     [--test-email tar.alitar@outlook.com] \
     [--dry-run]

@@ -21,7 +21,7 @@ Usage:
     --hook-token SECRET \
     --session-key hook:graph-mail \
     --client-state SUPER_SECRET \
-    [--repo-root /opt/openclaw-graph-office-suite] \
+    [--repo-root /opt/microsoft-365-graph-openclaw] \
     [--python /usr/bin/python3] \
     [--adapter-port 8789] \
     [--adapter-path /graph/mail] \
