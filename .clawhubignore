@@ -1,0 +1,31 @@
+# VCS and editor metadata
+.git/
+.github/
+.cursor/
+.vscode/
+
+# Python cache and build output
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+dist/
+build/
+
+# Runtime state and local secrets
+state/
+**/state/
+*.env
+*.log
+
+# Local-only assets and transcripts
+assets/
+agent-transcripts/
+terminals/
+mcps/
+
+# OS noise
+.DS_Store
+Thumbs.db

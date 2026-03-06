@@ -1,6 +1,35 @@
 ---
 name: graph-office-suite
 description: Operate Outlook email, calendar, contacts, and OneDrive via Microsoft Graph with assisted OAuth, plus push mail notifications via webhook adapter.
+version: 0.1.0
+license: MIT
+homepage: https://github.com/draeden79/openclaw-skills
+repository: https://github.com/draeden79/openclaw-skills
+os:
+  - linux
+  - macos
+  - windows
+primaryEnv:
+  - OPENCLAW_HOOK_URL
+  - OPENCLAW_HOOK_TOKEN
+  - GRAPH_WEBHOOK_CLIENT_STATE
+  - OPENCLAW_SESSION_KEY
+requires:
+  bins:
+    - python3
+    - bash
+    - curl
+  env:
+    - OPENCLAW_HOOK_URL
+    - OPENCLAW_HOOK_TOKEN
+    - GRAPH_WEBHOOK_CLIENT_STATE
+    - OPENCLAW_SESSION_KEY
+security:
+  summary: Push-first Graph integration with explicit hook token auth and clientState validation.
+  notes:
+    - Do not commit state/graph_auth.json or token-bearing logs.
+    - Keep hooks token and Graph clientState in protected env storage.
+    - Prefer /hooks/wake default to avoid unnecessary isolated agent runs.
 ---
 
 # Graph Office Suite Skill
@@ -12,7 +41,10 @@ description: Operate Outlook email, calendar, contacts, and OneDrive via Microso
    - Tenant (personal-account default): `consumers`
    - Default scopes: `Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite.All Contacts.ReadWrite offline_access`
    - For work/school accounts, use `--tenant-id organizations` (or tenant GUID) and a tenant-approved `--client-id`.
+   - The public default client ID is for quick testing. For production, prefer your own App Registration.
 3. Tokens are stored in `state/graph_auth.json` (ignored by git).
+
+Permission profiles (least privilege by use case) are documented in `../docs/permission-profiles.md`.
 
 ## 2. Assisted OAuth flow (Device Code)
 1. Run:

@@ -1,0 +1,32 @@
+name: smoke
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python deps
+        run: pip install requests
+
+      - name: Python syntax check
+        run: python -m compileall graph-office-suite/scripts
+
+      - name: Script help smoke checks
+        run: |
+          python3 graph-office-suite/scripts/graph_auth.py --help
+          python3 graph-office-suite/scripts/mail_fetch.py --help
+          python3 graph-office-suite/scripts/mail_subscriptions.py --help
+          python3 graph-office-suite/scripts/mail_webhook_worker.py --help
+          bash graph-office-suite/scripts/diagnose_mail_webhook_e2e.sh --help

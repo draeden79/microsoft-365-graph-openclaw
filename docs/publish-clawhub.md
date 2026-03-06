@@ -1,0 +1,40 @@
+# Publish to ClawHub
+
+## Goal
+
+Publish and keep this skill synchronized through the ClawHub flow with explicit packaging control.
+
+## Prerequisites
+
+- ClawHub access and authentication configured in your environment
+- `graph-office-suite/SKILL.md` metadata finalized
+- `.clawhubignore` reviewed to exclude runtime/local artifacts
+
+## Pre-publish checklist
+
+1) Verify no secrets in repository history or working tree.
+2) Ensure `README.md`, `SECURITY.md`, `CHANGELOG.md`, and quickstarts are up to date.
+3) Confirm workflows pass (`lint-shell`, `smoke`, `secret-scan`, `link-check`).
+4) Confirm release notes draft (`docs/release-v0.1.0.md`) is aligned with tag content.
+
+## Publish and sync flow
+
+Use the ClawHub sync flow for scan and publish updates:
+
+```bash
+clawhub sync --all
+```
+
+If your setup uses explicit login or project scoping, run those commands first per your ClawHub environment policy.
+
+## Post-publish validation
+
+- Confirm metadata renders correctly from SKILL frontmatter.
+- Confirm ignored files are not included in package payload.
+- Verify install path from public listing in a clean environment.
+
+## Release hygiene
+
+- Tag release (`v0.1.0`) after final verification.
+- Keep changelog and release notes synchronized.
+- Update docs first, then publish, to keep adoption friction low.
