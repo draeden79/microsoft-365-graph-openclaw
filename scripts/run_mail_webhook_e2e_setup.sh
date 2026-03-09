@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eu
+set -o pipefail 2>/dev/null || true
 
 # One-command setup for steps 2..6:
 # 2) Run EC2 bootstrap script
@@ -11,7 +12,7 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  sudo bash graph-office-suite/scripts/run_mail_webhook_e2e_setup.sh \
+  sudo bash scripts/run_mail_webhook_e2e_setup.sh \
     --domain graphhook.alitar.one \
     --hook-token "<OPENCLAW_HOOK_TOKEN>" \
     [--configure-openclaw-hooks] \
@@ -109,9 +110,9 @@ if [[ "$DRY_RUN" == "true" ]]; then
   info "Dry-run mode enabled: no system changes or API writes will be applied."
 fi
 
-SETUP_SCRIPT="$REPO_ROOT/graph-office-suite/scripts/setup_mail_webhook_ec2.sh"
-SUB_SCRIPT="$REPO_ROOT/graph-office-suite/scripts/mail_subscriptions.py"
-SEND_SCRIPT="$REPO_ROOT/graph-office-suite/scripts/mail_send.py"
+SETUP_SCRIPT="$REPO_ROOT/scripts/setup_mail_webhook_ec2.sh"
+SUB_SCRIPT="$REPO_ROOT/scripts/mail_subscriptions.py"
+SEND_SCRIPT="$REPO_ROOT/scripts/mail_send.py"
 ENV_FILE="/etc/default/graph-mail-webhook"
 ADAPTER_PATH="/graph/mail"
 

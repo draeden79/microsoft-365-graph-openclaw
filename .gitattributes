@@ -1,0 +1,4 @@
+# Force LF for shell scripts (avoid CRLF on Windows clone → ClawHub install)
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=lf

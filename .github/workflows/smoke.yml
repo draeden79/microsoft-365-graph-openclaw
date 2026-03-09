@@ -21,12 +21,12 @@ jobs:
         run: pip install requests
 
       - name: Python syntax check
-        run: python -m compileall graph-office-suite/scripts
+        run: python -m compileall scripts
 
       - name: Script help smoke checks
         run: |
-          python3 graph-office-suite/scripts/graph_auth.py --help
-          python3 graph-office-suite/scripts/mail_fetch.py --help
-          python3 graph-office-suite/scripts/mail_subscriptions.py --help
-          python3 graph-office-suite/scripts/mail_webhook_worker.py --help
-          bash graph-office-suite/scripts/diagnose_mail_webhook_e2e.sh --help
+          python3 scripts/graph_auth.py --help
+          python3 scripts/mail_fetch.py --help
+          python3 scripts/mail_subscriptions.py --help
+          python3 scripts/mail_webhook_worker.py --help
+          bash scripts/diagnose_mail_webhook_e2e.sh --help

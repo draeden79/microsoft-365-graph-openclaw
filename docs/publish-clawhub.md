@@ -7,7 +7,7 @@ Publish and keep this skill synchronized through the ClawHub flow with explicit 
 ## Prerequisites
 
 - ClawHub access and authentication configured in your environment
-- `graph-office-suite/SKILL.md` metadata finalized
+- `SKILL.md` metadata finalized
 - `.clawhubignore` reviewed to exclude runtime/local artifacts
 
 ## Pre-publish checklist
@@ -35,6 +35,27 @@ If your setup uses explicit login or project scoping, run those commands first p
 
 ## Release hygiene
 
-- Tag release (`v0.1.0`) after final verification.
+- Tag release (e.g. `v0.2.0`) after final verification.
 - Keep changelog and release notes synchronized.
 - Update docs first, then publish, to keep adoption friction low.
+
+## Release commands (after local changes)
+
+If Git identity is not set:
+
+```bash
+git config user.email "your@email.com"
+git config user.name "Your Name"
+```
+
+Then commit, tag, push, and publish:
+
+```bash
+git add -A
+git status
+git commit -m "chore: v0.2.0 - flatten repo, minimal setup, docs, CRLF/LF, session-key optional, generate-client-state"
+git tag v0.2.0
+git push origin main
+git push origin v0.2.0
+clawhub sync --all
+```

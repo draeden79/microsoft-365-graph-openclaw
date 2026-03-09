@@ -26,8 +26,8 @@ Core proposition:
 
 Primary references:
 - `README.md`
-- `graph-office-suite/SKILL.md`
-- `graph-office-suite/references/mail_webhook_adapter.md`
+- `SKILL.md`
+- `references/mail_webhook_adapter.md`
 
 ## Known limitations
 

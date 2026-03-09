@@ -117,7 +117,7 @@ def post_hook(
             "message": f"New email received via Graph webhook.\nFrom: {sender}\nSubject: {subject}\nMessageId: {message.get('id')}",
             "name": "Graph Mail",
             "sessionKey": session_key,
-            "source": "graph-office-suite",
+            "source": "microsoft-365-graph-openclaw",
             "eventType": "graph.mail.notification",
             "event": event,
             "mail": {

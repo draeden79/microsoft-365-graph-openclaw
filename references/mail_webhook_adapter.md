@@ -43,10 +43,8 @@ Security:
 - [ ] Security group/firewall: allow inbound `80/tcp` and `443/tcp`.
 - [ ] Microsoft Entra App Registration permissions/consent for mail scopes.
 - [ ] First OAuth login (`graph_auth.py device-login`) with the mailbox account.
-- [ ] Choose and securely store secrets:
-  - [ ] `GRAPH_WEBHOOK_CLIENT_STATE`
-  - [ ] `OPENCLAW_HOOK_TOKEN`
-  - [ ] `OPENCLAW_SESSION_KEY`
+- [ ] **OPENCLAW_HOOK_TOKEN:** generate a secret and set it in OpenClaw config and in `--hook-token`. See [Configurar hooks do OpenClaw](../docs/setup-openclaw-hooks.md).
+- [ ] **GRAPH_WEBHOOK_CLIENT_STATE:** in the minimal flow, the e2e setup script generates it automatically; no need to create it manually. Optionally use `python3 scripts/mail_webhook_adapter.py generate-client-state` to print a value (non-blocking).
 - [ ] Confirm OpenClaw Hooks are enabled and token-protected (`/hooks/wake` for default mode).
 
 ### Automatic (scripted in this project)
@@ -54,7 +52,7 @@ Security:
 Use:
 
 ```bash
-sudo bash graph-office-suite/scripts/setup_mail_webhook_ec2.sh \
+sudo bash scripts/setup_mail_webhook_ec2.sh \
   --domain graphhook.example.com \
   --hook-url http://127.0.0.1:18789/hooks/wake \
   --hook-token "<OPENCLAW_HOOK_TOKEN>" \
@@ -74,7 +72,7 @@ The script automates:
 One-command setup for steps 2..6 (bootstrap + validation + create subscription + persist ID + restart + optional test mail):
 
 ```bash
-sudo bash graph-office-suite/scripts/run_mail_webhook_e2e_setup.sh \
+sudo bash scripts/run_mail_webhook_e2e_setup.sh \
   --domain graphhook.example.com \
   --hook-token "<OPENCLAW_HOOK_TOKEN>" \
   --hook-url "http://127.0.0.1:18789/hooks/wake" \
@@ -85,7 +83,7 @@ sudo bash graph-office-suite/scripts/run_mail_webhook_e2e_setup.sh \
 To also auto-configure OpenClaw hooks in the same run:
 
 ```bash
-sudo bash graph-office-suite/scripts/run_mail_webhook_e2e_setup.sh \
+sudo bash scripts/run_mail_webhook_e2e_setup.sh \
   --domain graphhook.example.com \
   --hook-token "<OPENCLAW_HOOK_TOKEN>" \
   --configure-openclaw-hooks \
@@ -101,7 +99,7 @@ This mode creates a backup of the OpenClaw config, patches/creates the `hooks` b
 Run minimal-input smoke tests any time:
 
 ```bash
-bash graph-office-suite/scripts/run_mail_webhook_smoke_tests.sh \
+bash scripts/run_mail_webhook_smoke_tests.sh \
   --domain graphhook.example.com \
   --create-subscription \
   --test-email tar.alitar@outlook.com
@@ -155,17 +153,17 @@ If verdict is `PARTIAL`, the script output lists exactly what is missing.
 
 Recommended values to keep in service environment:
 
-- `GRAPH_WEBHOOK_CLIENT_STATE`: shared secret used in Graph subscription and adapter validation.
-- `OPENCLAW_HOOK_URL`: OpenClaw endpoint (`/hooks/wake` default, `/hooks/agent` optional advanced mode).
-- `OPENCLAW_HOOK_TOKEN`: hook token expected by OpenClaw.
-- `OPENCLAW_SESSION_KEY`: target session key for routing notifications.
+- **GRAPH_WEBHOOK_CLIENT_STATE:** shared secret used in Graph subscription and adapter validation. In the **minimal flow**, the e2e setup script generates it when not provided; you do not need to create it manually. For manual setup: run `python3 scripts/mail_webhook_adapter.py generate-client-state` to print a value and exit (non-blocking), or generate with `openssl rand -base64 24` (advanced).
+- **OPENCLAW_HOOK_URL:** OpenClaw endpoint (`/hooks/wake` default, `/hooks/agent` optional advanced mode).
+- **OPENCLAW_HOOK_TOKEN:** hook token; see [setup-openclaw-hooks.md](../docs/setup-openclaw-hooks.md).
+- **OPENCLAW_SESSION_KEY:** target session key for routing (optional in wake-only flow; default `hook:graph-mail`).
 
 ## 7) Operational commands
 
 Start adapter:
 
 ```bash
-python graph-office-suite/scripts/mail_webhook_adapter.py serve \
+python3 scripts/mail_webhook_adapter.py serve \
   --host 0.0.0.0 \
   --port 8789 \
   --path /graph/mail \
@@ -175,7 +173,7 @@ python graph-office-suite/scripts/mail_webhook_adapter.py serve \
 Create subscription:
 
 ```bash
-python graph-office-suite/scripts/mail_subscriptions.py create \
+python3 scripts/mail_subscriptions.py create \
   --notification-url "https://graph-hook.example.com/graph/mail" \
   --client-state "$GRAPH_WEBHOOK_CLIENT_STATE" \
   --minutes 4200
@@ -186,7 +184,7 @@ Note: default resource is `me/messages`. Override with `--resource` only when yo
 Renew subscription:
 
 ```bash
-python graph-office-suite/scripts/mail_subscriptions.py renew \
+python3 scripts/mail_subscriptions.py renew \
   --id "<subscription-id>" \
   --minutes 4200
 ```
@@ -194,7 +192,7 @@ python graph-office-suite/scripts/mail_subscriptions.py renew \
 Run worker:
 
 ```bash
-python graph-office-suite/scripts/mail_webhook_worker.py loop \
+python3 scripts/mail_webhook_worker.py loop \
   --session-key "$OPENCLAW_SESSION_KEY" \
   --hook-url "$OPENCLAW_HOOK_URL" \
   --hook-token "$OPENCLAW_HOOK_TOKEN"
@@ -205,7 +203,7 @@ python graph-office-suite/scripts/mail_webhook_worker.py loop \
 Use one command for a full pipeline snapshot:
 
 ```bash
-bash graph-office-suite/scripts/diagnose_mail_webhook_e2e.sh \
+bash scripts/diagnose_mail_webhook_e2e.sh \
   --domain graphhook.example.com \
   --repo-root "$(pwd)" \
   --lookback-minutes 30

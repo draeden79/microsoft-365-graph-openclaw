@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eu
+set -o pipefail 2>/dev/null || true
 
 # End-to-end diagnostic for Graph -> Adapter -> Worker -> OpenClaw wake flow.
 # Read-only by default, with optional wake probe.
@@ -7,7 +8,7 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  bash graph-office-suite/scripts/diagnose_mail_webhook_e2e.sh \
+  bash scripts/diagnose_mail_webhook_e2e.sh \
     --domain graphhook.example.com \
     [--repo-root /path/to/microsoft-365-graph-openclaw] \
     [--lookback-minutes 30] \
@@ -84,7 +85,7 @@ require_cmd ss
 require_cmd grep
 require_cmd sed
 
-MAIL_SUB_SCRIPT="$REPO_ROOT/graph-office-suite/scripts/mail_subscriptions.py"
+MAIL_SUB_SCRIPT="$REPO_ROOT/scripts/mail_subscriptions.py"
 [[ -f "$MAIL_SUB_SCRIPT" ]] || { echo "File not found: $MAIL_SUB_SCRIPT" >&2; exit 1; }
 
 if [[ -f "$REPO_ROOT/state/graph_ops.log" ]]; then

@@ -141,6 +141,13 @@ def serve(args: argparse.Namespace) -> None:
         server.server_close()
 
 
+def generate_client_state() -> None:
+    """Print a new clientState value and exit (non-blocking)."""
+    value = secrets.token_urlsafe(24)
+    print(f"clientState: {value}")
+    print("Use this value when creating subscriptions and in --client-state for setup.")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run Graph mail webhook adapter server.")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -156,6 +163,8 @@ def build_parser() -> argparse.ArgumentParser:
         help="Queue file path (JSONL).",
     )
 
+    sub.add_parser("generate-client-state", help="Print a new clientState value and exit.")
+
     return parser
 
 
@@ -164,6 +173,8 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == "serve":
         serve(args)
+    elif args.command == "generate-client-state":
+        generate_client_state()
 
 
 if __name__ == "__main__":

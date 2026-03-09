@@ -3,14 +3,14 @@
 ## List contacts
 
 ```
-python graph-office-suite/scripts/contacts_ops.py list --top 20
-python graph-office-suite/scripts/contacts_ops.py list --search "Jane"
+python scripts/contacts_ops.py list --top 20
+python scripts/contacts_ops.py list --search "Jane"
 ```
 
 ## Create contact
 
 ```
-python graph-office-suite/scripts/contacts_ops.py create \
+python scripts/contacts_ops.py create \
   --given-name Jane \
   --surname Doe \
   --email jane.doe@example.com \
@@ -21,13 +21,13 @@ python graph-office-suite/scripts/contacts_ops.py create \
 ## Get contact by ID
 
 ```
-python graph-office-suite/scripts/contacts_ops.py get <contactId>
+python scripts/contacts_ops.py get <contactId>
 ```
 
 ## Update contact
 
 ```
-python graph-office-suite/scripts/contacts_ops.py update <contactId> \
+python scripts/contacts_ops.py update <contactId> \
   --mobile "+1 555 0123" \
   --company "Contoso Ltd"
 ```
@@ -35,7 +35,7 @@ python graph-office-suite/scripts/contacts_ops.py update <contactId> \
 ## Delete contact
 
 ```
-python graph-office-suite/scripts/contacts_ops.py delete <contactId>
+python scripts/contacts_ops.py delete <contactId>
 ```
 
 ### Notes

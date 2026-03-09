@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eu
+set -o pipefail 2>/dev/null || true
 
 # Minimal-input smoke tests for Graph mail webhook setup.
 # Reuses values from /etc/default/graph-mail-webhook when available.
@@ -7,7 +8,7 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  bash graph-office-suite/scripts/run_mail_webhook_smoke_tests.sh \
+  bash scripts/run_mail_webhook_smoke_tests.sh \
     --domain graphhook.example.com \
     [--test-email tar.alitar@outlook.com] \
     [--client-state "<GRAPH_WEBHOOK_CLIENT_STATE>"] \
@@ -91,9 +92,9 @@ fi
 require_cmd curl
 require_cmd python3
 
-SEND_SCRIPT="$REPO_ROOT/graph-office-suite/scripts/mail_send.py"
-FETCH_SCRIPT="$REPO_ROOT/graph-office-suite/scripts/mail_fetch.py"
-SUB_SCRIPT="$REPO_ROOT/graph-office-suite/scripts/mail_subscriptions.py"
+SEND_SCRIPT="$REPO_ROOT/scripts/mail_send.py"
+FETCH_SCRIPT="$REPO_ROOT/scripts/mail_fetch.py"
+SUB_SCRIPT="$REPO_ROOT/scripts/mail_subscriptions.py"
 
 [[ -f "$SUB_SCRIPT" ]] || { echo "File not found: $SUB_SCRIPT" >&2; exit 1; }
 

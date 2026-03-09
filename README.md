@@ -6,7 +6,7 @@ Reduce recurring LLM cost from inbox polling while managing Outlook mail, calend
 This repository provides a webhook-driven Graph skill that wakes OpenClaw only when work actually happens in self-hosted deployments.
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Release](https://img.shields.io/badge/release-v0.1.4-blue.svg)
+![Release](https://img.shields.io/badge/release-v0.2.0-blue.svg)
 ![CI](https://img.shields.io/badge/ci-github_actions-informational.svg)
 
 ## Why this exists
@@ -67,35 +67,39 @@ Graph can deliver notifications only to a public HTTPS endpoint. Conceptual setu
    - `GET https://<your-host>/graph/mail?validationToken=test` returns `200` + token echo.
    - Graph subscription creation succeeds with `notificationUrl` set to this endpoint.
 
-After this prerequisite is in place, use the setup scripts in `graph-office-suite/scripts/` to automate the remaining pipeline.
+After this prerequisite is in place, use the setup scripts in `scripts/` to automate the remaining pipeline.
+
+## Passos mínimos (6 passos)
+
+Para configurar com o mínimo de parâmetros (incl. instalação via ClawHub), segue o [Guia mínimo](docs/guia-minimo.md): preparar → autenticar (app Alitar) → hook token no OpenClaw → um comando de setup → diagnóstico → smoke test. O setup gera o `clientState` e cria a subscrição automaticamente.
 
 ## Quickstart (push-first)
 
 1) Authenticate:
 ```bash
-python graph-office-suite/scripts/graph_auth.py device-login \
+python3 scripts/graph_auth.py device-login \
   --client-id 952d1b34-682e-48ce-9c54-bac5a96cbd42 \
   --tenant-id consumers
 ```
 
 2) Bootstrap production services (EC2 target):
 ```bash
-sudo bash graph-office-suite/scripts/setup_mail_webhook_ec2.sh --help
+sudo bash scripts/setup_mail_webhook_ec2.sh --help
 # preview all privileged actions first
-sudo bash graph-office-suite/scripts/setup_mail_webhook_ec2.sh --dry-run --help
+sudo bash scripts/setup_mail_webhook_ec2.sh --dry-run --help
 ```
 
 3) Run one-command setup:
 ```bash
-sudo bash graph-office-suite/scripts/run_mail_webhook_e2e_setup.sh --help
+sudo bash scripts/run_mail_webhook_e2e_setup.sh --help
 # optional safe preview mode
-sudo bash graph-office-suite/scripts/run_mail_webhook_e2e_setup.sh --dry-run --help
+sudo bash scripts/run_mail_webhook_e2e_setup.sh --dry-run --help
 ```
 
 4) Validate readiness:
 ```bash
-bash graph-office-suite/scripts/diagnose_mail_webhook_e2e.sh --help
-bash graph-office-suite/scripts/run_mail_webhook_smoke_tests.sh --help
+bash scripts/diagnose_mail_webhook_e2e.sh --help
+bash scripts/run_mail_webhook_smoke_tests.sh --help
 ```
 
 Onboarding paths:
@@ -122,14 +126,14 @@ Onboarding paths:
 Core Graph operations are unprivileged Python scripts.
 
 Privileged automation is limited to:
-- `graph-office-suite/scripts/setup_mail_webhook_ec2.sh`
-- `graph-office-suite/scripts/run_mail_webhook_e2e_setup.sh`
+- `scripts/setup_mail_webhook_ec2.sh`
+- `scripts/run_mail_webhook_e2e_setup.sh`
 
 Without `--dry-run`, these can write under `/etc`, create/enable systemd units, and optionally patch OpenClaw config + restart services. Review script output with `--dry-run` before applying changes on production hosts.
 
 ## Documentation map
 
-- Main skill guide: `graph-office-suite/SKILL.md`
+- Main skill guide: `SKILL.md`
 - Architecture: `docs/architecture.md`
 - Permission profiles: `docs/permission-profiles.md`
 - FAQ: `docs/faq.md`
@@ -137,9 +141,9 @@ Without `--dry-run`, these can write under `/etc`, create/enable systemd units, 
 - Positioning guide: `docs/positioning.md`
 - ClawHub publish guide: `docs/publish-clawhub.md`
 - Release notes draft: `docs/release-v0.1.0.md`
-- Auth reference: `graph-office-suite/references/auth.md`
-- Mail reference: `graph-office-suite/references/mail.md`
-- Mail webhook adapter reference: `graph-office-suite/references/mail_webhook_adapter.md`
-- Calendar reference: `graph-office-suite/references/calendar.md`
-- Drive reference: `graph-office-suite/references/drive.md`
-- Contacts reference: `graph-office-suite/references/contacts.md`
+- Auth reference: `references/auth.md`
+- Mail reference: `references/mail.md`
+- Mail webhook adapter reference: `references/mail_webhook_adapter.md`
+- Calendar reference: `references/calendar.md`
+- Drive reference: `references/drive.md`
+- Contacts reference: `references/contacts.md`

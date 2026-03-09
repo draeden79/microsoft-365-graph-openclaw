@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project follows Semantic Versioning.
 
+## [0.2.0] - 2026-03-09
+
+### Added
+- **Flattened repository layout:** skill content (`scripts/`, `references/`, `SKILL.md`) moved to repo root so `REPO_ROOT/scripts/` works for both clone and ClawHub install.
+- **Guia mínimo (6 passos):** [docs/guia-minimo.md](docs/guia-minimo.md) with minimal parameters; setup e2e generates clientState and creates subscription in one run.
+- **docs/setup-openclaw-hooks.md:** how to create and configure OPENCLAW_HOOK_TOKEN (generate value, where in openclaw.json, use in setup).
+- **docs/app-registration.md:** step-by-step for creating your own Microsoft Entra App Registration (optional; Alitar app is default).
+- **generate-client-state:** `python3 scripts/mail_webhook_adapter.py generate-client-state` prints a clientState and exits (non-blocking).
+
+### Changed
+- **session-key optional:** `setup_mail_webhook_ec2.sh` and e2e setup no longer require `--session-key`; default `hook:graph-mail` used when omitted.
+- **CRLF/LF:** `.gitattributes` forces LF for `*.sh`, `*.py`, `*.md`; scripts use portable `set -eu` + `set -o pipefail 2>/dev/null || true` for dash compatibility.
+- **Auth docs:** Alitar app as default path; optional "use your own app" with link to app-registration.md; work/school quickstart uses Alitar client ID by default.
+- **All paths:** references to `graph-office-suite/scripts/` and `graph-office-suite/references/` updated to `scripts/` and `references/` across docs, README, SKILL.md, and CI workflows.
+- Worker payload `source` set to `microsoft-365-graph-openclaw` for ClawHub alignment.
+
+### Documentation
+- README: new "Passos mínimos" section linking to guia-minimo.md.
+- references/auth.md: "Caminho principal" (Alitar), optional own app, link to app-registration.
+- references/mail_webhook_adapter.md: clientState (e2e generates; generate-client-state command; advanced manual).
+- Quickstarts reference guia-minimo, setup-openclaw-hooks, and app-registration where relevant.
+
 ## [0.1.3] - 2026-03-06
 
 ### Changed

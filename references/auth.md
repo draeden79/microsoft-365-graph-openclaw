@@ -1,19 +1,25 @@
 # Auth Reference
 
+## Caminho principal: usar o app da Alitar
+
+Não é preciso criar nenhuma App Registration no portal para começar. O skill usa por defeito o app **Openclaw Graph Integration by Alitar.one** (Client ID: `952d1b34-682e-48ce-9c54-bac5a96cbd42`). Basta fazer device-login e dar consentimento.
+
+- **Conta pessoal (Outlook, Hotmail):** `--tenant-id consumers`
+- **Conta work/school (Entra ID):** `--tenant-id organizations` (ou o GUID do tenant)
+
 ## Recommended authentication profiles
 
 ### Personal Microsoft account (`@outlook.com`, `@hotmail.com`, Microsoft 365 Family)
 
-- **Skill default Client ID**: `952d1b34-682e-48ce-9c54-bac5a96cbd42`
+- **Skill default Client ID**: `952d1b34-682e-48ce-9c54-bac5a96cbd42` (Alitar)
 - **Skill default tenant**: `consumers`
 - **Use when**: you authenticate with Microsoft personal accounts (MSA), without corporate Entra ID.
 
 ### Work/school account (Microsoft Entra ID / Azure AD)
 
-- **Recommended tenant**: `organizations` (or your tenant GUID)
-- **Client ID**: your organization app registration (or another tenant-approved app)
-- **Use when**: work/school accounts are controlled by tenant policy.
-- **Suggested scopes**:
+- **Default:** use o mesmo Client ID da Alitar com `--tenant-id organizations` (ou tenant GUID).
+- **Opcional:** se a tua organização já tiver um App Registration aprovado, usa `--client-id <seu-app-id>` e `--tenant-id <tenant-id>`. Ver [Como criar o seu próprio App Registration](../docs/app-registration.md) para o passo a passo no portal.
+- **Suggested scopes** (para app próprio):
   - `Mail.ReadWrite`
   - `Mail.Send`
   - `Calendars.ReadWrite`
@@ -23,11 +29,12 @@
 
 ## Assisted device-code flow
 
-1. Run (personal-account profile): `python graph-office-suite/scripts/graph_auth.py device-login --client-id 952d1b34-682e-48ce-9c54-bac5a96cbd42 --tenant-id consumers`
+1. Run (personal-account profile): `python3 scripts/graph_auth.py device-login --client-id 952d1b34-682e-48ce-9c54-bac5a96cbd42 --tenant-id consumers`  
+   Or work/school: `python3 scripts/graph_auth.py device-login --client-id 952d1b34-682e-48ce-9c54-bac5a96cbd42 --tenant-id organizations`
 2. The script prints **URL** and **code**.
 3. Open `https://microsoft.com/devicelogin`, paste the code, and authorize.
 4. On success, the script saves `state/graph_auth.json` with `access_token`, `refresh_token`, expiration, and scopes.
-5. Tokens auto-refresh before requests. To force refresh: `python graph-office-suite/scripts/graph_auth.py refresh`.
+5. Tokens auto-refresh before requests. To force refresh: `python3 scripts/graph_auth.py refresh`.
 6. Scopes are fixed by the skill defaults; scope override via CLI is intentionally disabled.
 
 ## `state/graph_auth.json` structure

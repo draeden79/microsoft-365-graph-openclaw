@@ -3,7 +3,7 @@
 ## Listing
 
 ```
-python graph-office-suite/scripts/mail_fetch.py --folder Inbox --top 10 --unread
+python scripts/mail_fetch.py --folder Inbox --top 10 --unread
 ```
 
 - `--filter` accepts OData expressions (`contains(subject,'Status')`).
@@ -14,7 +14,7 @@ python graph-office-suite/scripts/mail_fetch.py --folder Inbox --top 10 --unread
 ## Sending
 
 ```
-python graph-office-suite/scripts/mail_send.py \
+python scripts/mail_send.py \
   --to user@example.com \
   --subject "Follow-up" \
   --body-file drafts/reply.html --html \
@@ -39,7 +39,7 @@ Or query a known folder with `mail_fetch.py --folder SentItems`.
 ### Start webhook adapter
 
 ```
-python graph-office-suite/scripts/mail_webhook_adapter.py serve \
+python scripts/mail_webhook_adapter.py serve \
   --host 0.0.0.0 \
   --port 8789 \
   --path /graph/mail \
@@ -49,7 +49,7 @@ python graph-office-suite/scripts/mail_webhook_adapter.py serve \
 ### Create Graph subscription
 
 ```
-python graph-office-suite/scripts/mail_subscriptions.py create \
+python scripts/mail_subscriptions.py create \
   --notification-url "https://graph-hook.example.com/graph/mail" \
   --client-state "$GRAPH_WEBHOOK_CLIENT_STATE" \
   --minutes 4200
@@ -61,7 +61,7 @@ python graph-office-suite/scripts/mail_subscriptions.py create \
 ### Process notifications asynchronously
 
 ```
-python graph-office-suite/scripts/mail_webhook_worker.py loop \
+python scripts/mail_webhook_worker.py loop \
   --session-key "$OPENCLAW_SESSION_KEY" \
   --hook-url "$OPENCLAW_HOOK_URL" \
   --hook-token "$OPENCLAW_HOOK_TOKEN"
@@ -74,7 +74,7 @@ python graph-office-suite/scripts/mail_webhook_worker.py loop \
 - Renew subscriptions before expiration:
 
 ```
-python graph-office-suite/scripts/mail_subscriptions.py renew --id "<subscription-id>" --minutes 4200
+python scripts/mail_subscriptions.py renew --id "<subscription-id>" --minutes 4200
 ```
 
 ### Quick validation checklist (post-subscription)
@@ -84,4 +84,4 @@ python graph-office-suite/scripts/mail_subscriptions.py renew --id "<subscriptio
 - Confirm worker processes items: `tail -n 80 state/graph_ops.log | rg 'mail_webhook_processed|mail_webhook_drop_max_retries'`
 
 See full setup, checklists, and troubleshooting in:
-`graph-office-suite/references/mail_webhook_adapter.md`.
+`references/mail_webhook_adapter.md`.

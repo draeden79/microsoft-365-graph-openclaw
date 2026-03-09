@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eu
+set -o pipefail 2>/dev/null || true
 
 # Bootstrap Graph webhook adapter stack on Ubuntu/Debian EC2:
 # - Install Caddy
@@ -19,7 +20,7 @@ Usage:
     --domain graphhook.example.com \
     --hook-url http://127.0.0.1:18789/hooks/wake \
     --hook-token SECRET \
-    --session-key hook:graph-mail \
+    [--session-key hook:graph-mail] \
     --client-state SUPER_SECRET \
     [--repo-root /opt/microsoft-365-graph-openclaw] \
     [--python /usr/bin/python3] \
@@ -31,7 +32,7 @@ Usage:
 Notes:
   - Must run as root (or with sudo).
   - Assumes adapter scripts are available under:
-      <repo-root>/graph-office-suite/scripts/
+      <repo-root>/scripts/
 EOF
 }
 
@@ -56,7 +57,7 @@ run_cmd() {
 DOMAIN=""
 HOOK_URL=""
 HOOK_TOKEN=""
-SESSION_KEY=""
+SESSION_KEY="hook:graph-mail"
 CLIENT_STATE=""
 REPO_ROOT="$(pwd)"
 PYTHON_BIN="/usr/bin/python3"
@@ -83,7 +84,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "$DOMAIN" || -z "$HOOK_URL" || -z "$HOOK_TOKEN" || -z "$SESSION_KEY" || -z "$CLIENT_STATE" ]]; then
+if [[ -z "$DOMAIN" || -z "$HOOK_URL" || -z "$HOOK_TOKEN" || -z "$CLIENT_STATE" ]]; then
   echo "Missing required arguments." >&2
   usage
   exit 1
@@ -102,7 +103,7 @@ else
   require_cmd tee
 fi
 
-SCRIPTS_DIR="$REPO_ROOT/graph-office-suite/scripts"
+SCRIPTS_DIR="$REPO_ROOT/scripts"
 ADAPTER_SCRIPT="$SCRIPTS_DIR/mail_webhook_adapter.py"
 WORKER_SCRIPT="$SCRIPTS_DIR/mail_webhook_worker.py"
 SUB_SCRIPT="$SCRIPTS_DIR/mail_subscriptions.py"

@@ -3,7 +3,7 @@
 ## List events
 
 ```
-python graph-office-suite/scripts/calendar_sync.py list --start 2026-03-03T00:00Z --end 2026-03-05T00:00Z --top 20
+python scripts/calendar_sync.py list --start 2026-03-03T00:00Z --end 2026-03-05T00:00Z --top 20
 ```
 
 Without parameters, `list` covers now through +7 days.
@@ -11,7 +11,7 @@ Without parameters, `list` covers now through +7 days.
 ## Create event
 
 ```
-python graph-office-suite/scripts/calendar_sync.py create \
+python scripts/calendar_sync.py create \
   --subject "Meeting with team" \
   --start 2026-03-05T12:00 \
   --end 2026-03-05T13:00 \
@@ -28,13 +28,13 @@ For personal Microsoft accounts (`tenant=consumers`), Graph can return no join U
 ## Update event
 
 ```
-python graph-office-suite/scripts/calendar_sync.py update <eventId> --start 2026-03-05T12:30 --end 2026-03-05T13:30
+python scripts/calendar_sync.py update <eventId> --start 2026-03-05T12:30 --end 2026-03-05T13:30
 ```
 
 ## Cancel event
 
 ```
-python graph-office-suite/scripts/calendar_sync.py cancel <eventId> --message "Rescheduling this event."
+python scripts/calendar_sync.py cancel <eventId> --message "Rescheduling this event."
 ```
 
 ### Notes

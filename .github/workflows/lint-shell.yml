@@ -17,7 +17,7 @@ jobs:
 
       - name: Run shellcheck
         run: |
-          scripts="$(find graph-office-suite/scripts -type f -name '*.sh' | tr '\n' ' ')"
+          scripts="$(find scripts -type f -name '*.sh' | tr '\n' ' ')"
           if [ -n "$scripts" ]; then
             shellcheck $scripts
           else
