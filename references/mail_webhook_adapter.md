@@ -43,7 +43,7 @@ Security:
 - [ ] Security group/firewall: allow inbound `80/tcp` and `443/tcp`.
 - [ ] Microsoft Entra App Registration permissions/consent for mail scopes.
 - [ ] First OAuth login (`graph_auth.py device-login`) with the mailbox account.
-- [ ] **OPENCLAW_HOOK_TOKEN:** generate a secret and set it in OpenClaw config and in `--hook-token`. See [Configurar hooks do OpenClaw](../docs/setup-openclaw-hooks.md).
+- [ ] **OPENCLAW_HOOK_TOKEN:** generate a secret and set it in OpenClaw config and in `--hook-token`. See [Configure OpenClaw hooks](../docs/setup-openclaw-hooks.md).
 - [ ] **GRAPH_WEBHOOK_CLIENT_STATE:** in the minimal flow, the e2e setup script generates it automatically; no need to create it manually. Optionally use `python3 scripts/mail_webhook_adapter.py generate-client-state` to print a value (non-blocking).
 - [ ] Confirm OpenClaw Hooks are enabled and token-protected (`/hooks/wake` for default mode).
 

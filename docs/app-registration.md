@@ -1,57 +1,57 @@
-# Criar o seu próprio App Registration (Microsoft Entra ID)
+# Create Your Own App Registration (Microsoft Entra ID)
 
-Para **começar rapidamente** podes usar o app da Alitar (ver [references/auth.md](../references/auth.md)); não é preciso criar nada no portal. Esta página descreve como criar o **teu próprio** App Registration quando quiseres controlo total (produção, políticas do tenant, governação).
+To **start quickly**, you can use the default Alitar app (see [references/auth.md](../references/auth.md)); no portal setup is required. This page explains how to create **your own** App Registration when you need full control (production governance, tenant policies, compliance).
 
-## Quando faz sentido
+## When to use this path
 
-- Produção com requisitos de conformidade ou políticas do tenant
-- A organização exige uso de um app registado no tenant
-- Queres gerir scopes e consentimento de forma isolada
+- Production environments with compliance or tenant policy requirements
+- Organizations that require a tenant-owned app registration
+- Scenarios where you want isolated scope and consent management
 
-## Passo a passo
+## Step-by-step
 
-### 1. Onde entrar
+### 1. Open the portal
 
-- **Portal Azure:** [https://portal.azure.com](https://portal.azure.com) → Azure Active Directory (ou Microsoft Entra ID)
-- Ou **Microsoft Entra admin center:** [https://entra.microsoft.com](https://entra.microsoft.com)
+- **Azure Portal:** [https://portal.azure.com](https://portal.azure.com) -> Azure Active Directory (or Microsoft Entra ID)
+- Or **Microsoft Entra admin center:** [https://entra.microsoft.com](https://entra.microsoft.com)
 
-Navegação: **Azure Active Directory** (ou **Entra ID**) → **App registrations** → **New registration**.
+Navigation path: **Azure Active Directory** (or **Entra ID**) -> **App registrations** -> **New registration**.
 
-### 2. Criar o registo
+### 2. Create the app registration
 
-- **Name:** por exemplo "OpenClaw Graph Mail".
-- **Supported account types:** conforme o teu cenário (single tenant, multitenant, ou contas pessoais).
-- **Redirect URI:** para device code flow, não é obrigatório configurar redirect; podes deixar em branco ou escolher "Public client / native".
-- Clicar **Register**.
+- **Name:** for example, `OpenClaw Graph Mail`
+- **Supported account types:** select based on your use case (single tenant, multitenant, personal accounts)
+- **Redirect URI:** not required for device-code flow; leave blank or use `Public client / native`
+- Click **Register**
 
-### 3. Copiar o Application (client) ID
+### 3. Copy the Application (client) ID
 
-Na página **Overview** do app, copia o **Application (client) ID**. Esse valor é o teu `--client-id` nos comandos de autenticação.
+In the app **Overview** page, copy **Application (client) ID**. This is the value used as `--client-id` in authentication commands.
 
-### 4. Configurar suporte a device code (public client)
+### 4. Enable device-code support (public client)
 
-- **Authentication** → **Advanced settings** → **Allow public client flows** → **Yes** (para device code flow).
+- **Authentication** -> **Advanced settings** -> **Allow public client flows** -> **Yes**
 
-### 5. Adicionar permissões de API
+### 5. Add API permissions
 
-- **API permissions** → **Add a permission** → **Microsoft Graph** → **Delegated permissions**.
-- Adicionar pelo menos:
+- **API permissions** -> **Add a permission** -> **Microsoft Graph** -> **Delegated permissions**
+- Add at least:
   - `Mail.ReadWrite`
-  - `Mail.Send` (opcional)
-  - `offline_access` (obrigatório para refresh token)
-- Para calendário/Drive/Contacts, conforme o skill: `Calendars.ReadWrite`, `Files.ReadWrite.All`, `Contacts.ReadWrite`.
+  - `Mail.Send` (optional)
+  - `offline_access` (required for refresh token)
+- For calendar/Drive/Contacts workflows, also add: `Calendars.ReadWrite`, `Files.ReadWrite.All`, `Contacts.ReadWrite`
 
-### 6. Consentimento
+### 6. Grant consent
 
-- **User consent:** cada utilizador pode conceder ao fazer device login.
-- **Admin consent:** em alguns tenants é obrigatório; um administrador concede em **API permissions** → **Grant admin consent for <tenant>**.
+- **User consent:** each user can grant consent during device login
+- **Admin consent:** some tenants require admin approval in **API permissions** -> **Grant admin consent for <tenant>**
 
-### 7. Usar nos comandos
+### 7. Use the app in commands
 
-- Conta pessoal (MSA): normalmente o teu app precisa de estar configurado para "Personal Microsoft accounts" no registo; usa `--tenant-id consumers`.
-- Work/school: `--client-id <teu-application-id>` e `--tenant-id organizations` (ou o GUID do tenant).
+- Personal account (MSA): ensure your app supports personal Microsoft accounts and use `--tenant-id consumers`
+- Work/school: use `--client-id <your-application-id>` and `--tenant-id organizations` (or your tenant GUID)
 
-Exemplo:
+Example:
 
 ```bash
 python3 scripts/graph_auth.py device-login \
@@ -59,7 +59,7 @@ python3 scripts/graph_auth.py device-login \
   --tenant-id organizations
 ```
 
-## Referências
+## References
 
-- [Auth reference](../references/auth.md) — perfis recomendados e erros comuns
+- [Auth reference](../references/auth.md) - recommended profiles and common auth errors
 - [Microsoft identity platform / device code flow](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code)

@@ -32,7 +32,7 @@ security:
    - `GRAPH_WEBHOOK_CLIENT_STATE`
    - `OPENCLAW_SESSION_KEY`
 
-Permission profiles (least privilege by use case) are documented in `../docs/permission-profiles.md`.
+Permission profiles (least privilege by use case) are documented in `docs/permission-profiles.md`.
 
 ## 2. Assisted OAuth flow (Device Code)
 1. Run:

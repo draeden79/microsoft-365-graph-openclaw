@@ -69,48 +69,82 @@ Graph can deliver notifications only to a public HTTPS endpoint. Conceptual setu
 
 After this prerequisite is in place, use the setup scripts in `scripts/` to automate the remaining pipeline.
 
-## Passos mínimos (6 passos)
+## Minimal setup (6 steps)
 
-Para configurar com o mínimo de parâmetros (incl. instalação via ClawHub), segue o [Guia mínimo](docs/guia-minimo.md): preparar → autenticar (app Alitar) → hook token no OpenClaw → um comando de setup → diagnóstico → smoke test. O setup gera o `clientState` e cria a subscrição automaticamente.
+Use this path for a low-friction installation (including ClawHub installs). It uses the fewest parameters, auto-generates `clientState`, and creates the Graph subscription automatically.
 
-## Quickstart (push-first)
-
-1) Authenticate:
+0) Install from ClawHub (if not already installed):
 ```bash
+clawhub install microsoft-365-graph-openclaw
+```
+
+1) Prepare:
+```bash
+cd /path/to/skills/microsoft-365-graph-openclaw
+export REPO_ROOT="$(pwd)"
+```
+
+2) Authenticate (choose one):
+```bash
+# Personal account (Outlook/Hotmail)
 python3 scripts/graph_auth.py device-login \
   --client-id 952d1b34-682e-48ce-9c54-bac5a96cbd42 \
   --tenant-id consumers
+
+# Work/school account
+python3 scripts/graph_auth.py device-login \
+  --client-id 952d1b34-682e-48ce-9c54-bac5a96cbd42 \
+  --tenant-id organizations
 ```
 
-2) Bootstrap production services (EC2 target):
+3) Configure OpenClaw hooks in `openclaw.json` and restart OpenClaw:
+```json
+"hooks": {
+  "enabled": true,
+  "token": "<OPENCLAW_HOOK_TOKEN>",
+  "defaultSessionKey": "hook:ingress",
+  "allowRequestSessionKey": false,
+  "allowedSessionKeyPrefixes": ["hook:"]
+}
+```
+- Use the same token value in setup step 4.
+- Full hook guidance: `docs/setup-openclaw-hooks.md`.
+
+4) Run one setup command:
 ```bash
-sudo bash scripts/setup_mail_webhook_ec2.sh --help
-# preview all privileged actions first
-sudo bash scripts/setup_mail_webhook_ec2.sh --dry-run --help
+sudo bash scripts/run_mail_webhook_e2e_setup.sh \
+  --domain graphhook.example.com \
+  --hook-token "<OPENCLAW_HOOK_TOKEN>" \
+  --test-email "your-email@example.com" \
+  --repo-root "$REPO_ROOT"
 ```
 
-3) Run one-command setup:
+5) Run diagnostics:
 ```bash
-sudo bash scripts/run_mail_webhook_e2e_setup.sh --help
-# optional safe preview mode
-sudo bash scripts/run_mail_webhook_e2e_setup.sh --dry-run --help
+bash scripts/diagnose_mail_webhook_e2e.sh \
+  --domain graphhook.example.com \
+  --repo-root "$REPO_ROOT"
 ```
 
-4) Validate readiness:
+6) Run smoke test:
 ```bash
-bash scripts/diagnose_mail_webhook_e2e.sh --help
-bash scripts/run_mail_webhook_smoke_tests.sh --help
+bash scripts/run_mail_webhook_smoke_tests.sh \
+  --domain graphhook.example.com \
+  --create-subscription \
+  --test-email "your-email@example.com"
 ```
 
-Onboarding paths:
-- Personal Outlook: `docs/quickstart-personal-outlook.md`
-- Microsoft 365 work/school: `docs/quickstart-m365-work-school.md`
+Expected final verdict: `READY_FOR_PUSH`.
 
-## Permission profiles and client ID guidance
+Detailed walkthrough: `docs/minimal-setup.md`.
+If setup checks fail, see `docs/troubleshooting.md` and `docs/faq.md`.
 
-- Permission profiles: `docs/permission-profiles.md`
-- The default public `client_id` is for testing convenience.
-- For production, use your own App Registration to control consent, lifecycle, and governance.
+## Authentication for your use case
+
+- Personal Outlook/Hotmail: use `--tenant-id consumers` with the default client ID.
+- Work/school Entra account: use `--tenant-id organizations` (or tenant GUID).
+- Production environments: use your own app registration and consent model. See `docs/app-registration.md`.
+- Scope sets by use case (mail-only, calendar-only, full suite): `docs/permission-profiles.md`.
 
 ## Security and auditability
 
@@ -120,6 +154,12 @@ Onboarding paths:
 - Push-mode runtime requires: `OPENCLAW_HOOK_URL`, `OPENCLAW_HOOK_TOKEN`, `GRAPH_WEBHOOK_CLIENT_STATE`, `OPENCLAW_SESSION_KEY`.
 - The project is self-hosted and production-oriented, with explicit setup and diagnostics.
 - See `SECURITY.md` for threat model and credential revocation guidance.
+- API command references by workload:
+  - Mail: `references/mail.md`
+  - Calendar: `references/calendar.md`
+  - Drive: `references/drive.md`
+  - Contacts: `references/contacts.md`
+  - Webhook adapter: `references/mail_webhook_adapter.md`
 
 ## Privileged operations boundary
 
@@ -130,20 +170,3 @@ Privileged automation is limited to:
 - `scripts/run_mail_webhook_e2e_setup.sh`
 
 Without `--dry-run`, these can write under `/etc`, create/enable systemd units, and optionally patch OpenClaw config + restart services. Review script output with `--dry-run` before applying changes on production hosts.
-
-## Documentation map
-
-- Main skill guide: `SKILL.md`
-- Architecture: `docs/architecture.md`
-- Permission profiles: `docs/permission-profiles.md`
-- FAQ: `docs/faq.md`
-- Troubleshooting: `docs/troubleshooting.md`
-- Positioning guide: `docs/positioning.md`
-- ClawHub publish guide: `docs/publish-clawhub.md`
-- Release notes draft: `docs/release-v0.1.0.md`
-- Auth reference: `references/auth.md`
-- Mail reference: `references/mail.md`
-- Mail webhook adapter reference: `references/mail_webhook_adapter.md`
-- Calendar reference: `references/calendar.md`
-- Drive reference: `references/drive.md`
-- Contacts reference: `references/contacts.md`

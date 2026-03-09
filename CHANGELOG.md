@@ -8,7 +8,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ### Added
 - **Flattened repository layout:** skill content (`scripts/`, `references/`, `SKILL.md`) moved to repo root so `REPO_ROOT/scripts/` works for both clone and ClawHub install.
-- **Guia mínimo (6 passos):** [docs/guia-minimo.md](docs/guia-minimo.md) with minimal parameters; setup e2e generates clientState and creates subscription in one run.
+- **Minimal guide (6 steps):** [docs/minimal-setup.md](docs/minimal-setup.md) with minimal parameters; e2e setup generates clientState and creates subscription in one run.
 - **docs/setup-openclaw-hooks.md:** how to create and configure OPENCLAW_HOOK_TOKEN (generate value, where in openclaw.json, use in setup).
 - **docs/app-registration.md:** step-by-step for creating your own Microsoft Entra App Registration (optional; Alitar app is default).
 - **generate-client-state:** `python3 scripts/mail_webhook_adapter.py generate-client-state` prints a clientState and exits (non-blocking).
@@ -21,10 +21,10 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 - Worker payload `source` set to `microsoft-365-graph-openclaw` for ClawHub alignment.
 
 ### Documentation
-- README: new "Passos mínimos" section linking to guia-minimo.md.
-- references/auth.md: "Caminho principal" (Alitar), optional own app, link to app-registration.
+- README: new "Minimal setup" section linking to `docs/minimal-setup.md`.
+- references/auth.md: "Main path" (Alitar), optional own app, link to `docs/app-registration.md`.
 - references/mail_webhook_adapter.md: clientState (e2e generates; generate-client-state command; advanced manual).
-- Quickstarts reference guia-minimo, setup-openclaw-hooks, and app-registration where relevant.
+- Setup documentation links `minimal-setup`, `setup-openclaw-hooks`, and `app-registration`.
 
 ## [0.1.3] - 2026-03-06
 

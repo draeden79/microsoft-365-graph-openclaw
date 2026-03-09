@@ -1,11 +1,11 @@
 # Auth Reference
 
-## Caminho principal: usar o app da Alitar
+## Main path: use the Alitar app
 
-Não é preciso criar nenhuma App Registration no portal para começar. O skill usa por defeito o app **Openclaw Graph Integration by Alitar.one** (Client ID: `952d1b34-682e-48ce-9c54-bac5a96cbd42`). Basta fazer device-login e dar consentimento.
+You do not need to create an App Registration to get started. The skill uses **Openclaw Graph Integration by Alitar.one** by default (Client ID: `952d1b34-682e-48ce-9c54-bac5a96cbd42`). Run device login and grant consent.
 
-- **Conta pessoal (Outlook, Hotmail):** `--tenant-id consumers`
-- **Conta work/school (Entra ID):** `--tenant-id organizations` (ou o GUID do tenant)
+- **Personal account (Outlook, Hotmail):** `--tenant-id consumers`
+- **Work/school account (Entra ID):** `--tenant-id organizations` (or the tenant GUID)
 
 ## Recommended authentication profiles
 
@@ -17,9 +17,9 @@ Não é preciso criar nenhuma App Registration no portal para começar. O skill 
 
 ### Work/school account (Microsoft Entra ID / Azure AD)
 
-- **Default:** use o mesmo Client ID da Alitar com `--tenant-id organizations` (ou tenant GUID).
-- **Opcional:** se a tua organização já tiver um App Registration aprovado, usa `--client-id <seu-app-id>` e `--tenant-id <tenant-id>`. Ver [Como criar o seu próprio App Registration](../docs/app-registration.md) para o passo a passo no portal.
-- **Suggested scopes** (para app próprio):
+- **Default:** use the Alitar Client ID with `--tenant-id organizations` (or tenant GUID).
+- **Optional:** if your organization already has an approved App Registration, use `--client-id <your-app-id>` and `--tenant-id <tenant-id>`. See [Create Your Own App Registration](../docs/app-registration.md) for portal steps.
+- **Suggested scopes** (for your own app):
   - `Mail.ReadWrite`
   - `Mail.Send`
   - `Calendars.ReadWrite`
