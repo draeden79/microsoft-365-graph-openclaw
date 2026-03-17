@@ -6,7 +6,7 @@ Reduce recurring LLM cost from inbox polling while managing Outlook mail, calend
 This repository provides a webhook-driven Graph skill that wakes OpenClaw only when work actually happens in self-hosted deployments.
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Release](https://img.shields.io/badge/release-v0.2.0-blue.svg)
+![Release](https://img.shields.io/badge/release-v0.2.1-blue.svg)
 ![CI](https://img.shields.io/badge/ci-github_actions-informational.svg)
 
 ## Why this exists
