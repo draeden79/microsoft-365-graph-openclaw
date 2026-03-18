@@ -1,7 +1,7 @@
 ---
 name: microsoft-365-graph-openclaw
 description: Microsoft 365 Graph for OpenClaw with webhook-based wake signals. Reduce recurring LLM cost from inbox polling while managing Outlook mail, calendar, OneDrive, and contacts via Microsoft Graph.
-version: 0.2.1
+version: 0.2.2
 license: MIT
 homepage: https://github.com/draeden79/microsoft-365-graph-openclaw
 repository: https://github.com/draeden79/microsoft-365-graph-openclaw
@@ -25,11 +25,12 @@ security:
    - For work/school accounts, use `--tenant-id organizations` (or tenant GUID) and a tenant-approved `--client-id`.
    - The public default client ID is for quick testing. For production, prefer your own App Registration.
 3. Tokens are stored in `state/graph_auth.json` (ignored by git).
-4. Required runtime envs for push mode:
-   - `OPENCLAW_HOOK_URL`
-   - `OPENCLAW_HOOK_TOKEN`
-   - `GRAPH_WEBHOOK_CLIENT_STATE`
-   - `OPENCLAW_SESSION_KEY`
+4. Push-mode runtime values (service-level):
+   - These values are loaded by systemd services from `/etc/default/graph-mail-webhook` (usually written by setup scripts).
+   - `OPENCLAW_HOOK_URL` (required)
+   - `OPENCLAW_HOOK_TOKEN` (required)
+   - `GRAPH_WEBHOOK_CLIENT_STATE` (required; auto-generated in minimal e2e setup when omitted)
+   - `OPENCLAW_SESSION_KEY` (optional; default `hook:graph-mail`)
 
 Permission profiles (least privilege by use case) are documented in `docs/permission-profiles.md`.
 

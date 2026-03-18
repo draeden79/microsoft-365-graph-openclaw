@@ -25,6 +25,7 @@ Actions:
 ## OpenClaw hook returns 400/401
 
 Actions:
+0) Confirm running services load values from `/etc/default/graph-mail-webhook` (or source it in the same shell before manual tests).
 1) Verify `OPENCLAW_HOOK_URL` points to `/hooks/wake`.
 2) Verify `OPENCLAW_HOOK_TOKEN` and header auth.
 3) Check OpenClaw `hooks.enabled=true` and `hooks.token`.

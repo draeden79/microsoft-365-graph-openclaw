@@ -71,6 +71,7 @@ python scripts/mail_webhook_worker.py loop \
 - Worker performs dedupe by `subscriptionId/messageId/changeType`.
 - Worker default mode posts a `wake` signal to OpenClaw `/hooks/wake` (`mode=now`) so the inbox is processed in the next heartbeat cycle.
 - Optional advanced mode: `--hook-action agent` to fetch full mail via Graph and post a rich payload to `/hooks/agent`.
+- In production, values are typically loaded from `/etc/default/graph-mail-webhook` created by setup scripts; `OPENCLAW_SESSION_KEY` is optional (default `hook:graph-mail`).
 - Renew subscriptions before expiration:
 
 ```

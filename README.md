@@ -6,7 +6,7 @@ Reduce recurring LLM cost from inbox polling while managing Outlook mail, calend
 This repository provides a webhook-driven Graph skill that wakes OpenClaw only when work actually happens in self-hosted deployments.
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Release](https://img.shields.io/badge/release-v0.2.1-blue.svg)
+![Release](https://img.shields.io/badge/release-v0.2.2-blue.svg)
 ![CI](https://img.shields.io/badge/ci-github_actions-informational.svg)
 
 ## Why this exists
@@ -153,7 +153,7 @@ If setup checks fail, see `docs/troubleshooting.md` and `docs/faq.md`.
 - Token-bearing files stay in `state/` and must never be committed.
 - Webhook authentication requires dedicated hook token headers.
 - Graph webhook integrity uses `GRAPH_WEBHOOK_CLIENT_STATE`.
-- Push-mode runtime requires: `OPENCLAW_HOOK_URL`, `OPENCLAW_HOOK_TOKEN`, `GRAPH_WEBHOOK_CLIENT_STATE`, `OPENCLAW_SESSION_KEY`.
+- Push-mode runtime uses service-level values from `/etc/default/graph-mail-webhook` (written by setup scripts): `OPENCLAW_HOOK_URL` (required), `OPENCLAW_HOOK_TOKEN` (required), `GRAPH_WEBHOOK_CLIENT_STATE` (required), and `OPENCLAW_SESSION_KEY` (optional; default `hook:graph-mail`).
 - The project is self-hosted and production-oriented, with explicit setup and diagnostics.
 - See `SECURITY.md` for threat model and credential revocation guidance.
 - API command references by workload:

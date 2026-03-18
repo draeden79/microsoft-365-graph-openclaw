@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project follows Semantic Versioning.
 
+## [0.2.2] - 2026-03-06
+
+### Changed
+- Clarified documentation so runtime values are described as service-level values loaded from `/etc/default/graph-mail-webhook`, rather than manual install-time environment requirements.
+- Marked `OPENCLAW_SESSION_KEY` as optional (`hook:graph-mail` default) and documented minimal-flow `GRAPH_WEBHOOK_CLIENT_STATE` auto-generation behavior.
+
 ## [0.2.1] - 2026-03-06
 
 ### Changed

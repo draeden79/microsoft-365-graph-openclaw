@@ -151,7 +151,7 @@ If verdict is `PARTIAL`, the script output lists exactly what is missing.
 
 ## 6) Environment and runtime values
 
-Recommended values to keep in service environment:
+Runtime values loaded by services from `/etc/default/graph-mail-webhook` (typically written by setup scripts):
 
 - **GRAPH_WEBHOOK_CLIENT_STATE:** shared secret used in Graph subscription and adapter validation. In the **minimal flow**, the e2e setup script generates it when not provided; you do not need to create it manually. For manual setup: run `python3 scripts/mail_webhook_adapter.py generate-client-state` to print a value and exit (non-blocking), or generate with `openssl rand -base64 24` (advanced).
 - **OPENCLAW_HOOK_URL:** OpenClaw endpoint (`/hooks/wake` default, `/hooks/agent` optional advanced mode).
